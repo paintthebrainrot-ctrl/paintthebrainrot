@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint the Brainrot</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f5f0;
+    --red: #ff2d2d;
+    --gold: #ffd700;
+    --common: #d0d0d0;
+    --uncommon: #4caf50;
+    --rare: #2196f3;
+    --epic: #9c27b0;
+    --legendary: #ff9800;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 0%, #1a0a00 0%, var(--black) 70%);
+  }
+
+  .hero-bg-marks {
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    opacity: 0.06; pointer-events: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--white);
+    overflow: hidden;
+  }
+  .hero-bg-marks span {
+    display: flex; align-items: center; justify-content: center;
+    animation: floatMark 8s ease-in-out infinite;
+  }
+  .hero-bg-marks span:nth-child(odd) { animation-delay: -4s; }
+  .hero-bg-marks span:nth-child(3n) { animation-delay: -2s; }
+  @keyframes floatMark {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(5deg); }
+  }
+
+  .hero-badge {
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 3px;
+    font-size: 0.85rem;
+    padding: 6px 18px;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 14vw, 10rem);
+    line-height: 0.9;
+    text-align: center;
+    letter-spacing: -2px;
+    animation: fadeDown 0.7s ease 0.1s both;
+  }
+  .hero-title .paint { color: var(--white); }
+  .hero-title .the { color: #555; font-size: 0.5em; display: block; letter-spacing: 8px; }
+  .hero-title .brainrot { 
+    color: var(--red); 
+    text-shadow: 0 0 40px rgba(255,45,45,0.5), 4px 4px 0 #7a0000;
+    display: block;
+  }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: #888;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.6;
+    animation: fadeDown 0.7s ease 0.2s both;
+  }
+  .hero-sub strong { color: var(--white); }
+
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 2.5rem;
+    animation: fadeDown 0.7s ease 0.3s both;
+  }
+  .btn {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    padding: 14px 36px;
+    border: none; border-radius: 3px;
+    cursor: pointer; text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-block;
+  }
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .btn-primary { background: var(--red); color: var(--white); }
+  .btn-secondary { background: transparent; color: var(--white); border: 2px solid #333; }
+  .btn-secondary:hover { border-color: var(--white); }
+
+  .hero-scroll {
+    position: absolute; bottom: 2rem;
+    font-size: 0.75rem; color: #444; letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── MYSTERY BOX SECTION ── */
+  .mystery {
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(180deg, var(--black) 0%, #0f0800 50%, var(--black) 100%);
+  }
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 6px; font-size: 0.8rem;
+    color: var(--red); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: 1; margin-bottom: 1.5rem;
+  }
+  .section-body {
+    color: #888; max-width: 560px; margin: 0 auto 3rem;
+    line-height: 1.7; font-size: 1rem;
+  }
+  .section-body strong { color: var(--white); }
+
+  .bag-visual {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: min(280px, 70vw); height: min(360px, 90vw);
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    border: 2px solid #2a2a2a;
+    border-radius: 12px;
+    position: relative;
+    margin: 0 auto 3rem;
+    box-shadow: 0 0 60px rgba(255,45,45,0.15), inset 0 0 30px rgba(0,0,0,0.5);
+    animation: bagFloat 4s ease-in-out infinite;
+    overflow: hidden;
+  }
+  .bag-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.02) 18px, rgba(255,255,255,0.02) 20px);
+  }
+  .bag-qmarks {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem; color: rgba(255,255,255,0.07);
+    line-height: 1; user-select: none;
+    letter-spacing: -5px;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    word-break: break-all; overflow: hidden;
+  }
+  .bag-center {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  .bag-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem; letter-spacing: 4px; color: var(--white);
+  }
+  .bag-big-q {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem; color: var(--red);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(255,45,45,0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .bag-sub { font-size: 0.7rem; color: #555; letter-spacing: 3px; text-transform: uppercase; }
+  @keyframes bagFloat { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-12px) rotate(1deg)} }
+  @keyframes pulse { 0%,100%{text-shadow:0 0 30px rgba(255,45,45,0.6)} 50%{text-shadow:0 0 60px rgba(255,45,45,0.9)} }
+
+  /* ── RARITY SECTION ── */
+  .rarities {
+    padding: 6rem 2rem;
+    background: #050505;
+  }
+  .rarities-inner { max-width: 1100px; margin: 0 auto; }
+  .rarities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-top: 3rem;
+  }
+  .rarity-card {
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid #1a1a1a;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .rarity-card:hover { transform: translateY(-6px); }
+  .rarity-header {
+    padding: 1.2rem 1rem 0.8rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  }
+  .rarity-sym { font-size: 2rem; }
+  .rarity-name {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 3px; font-size: 1.2rem;
+  }
+  .rarity-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; line-height: 1;
+  }
+  .rarity-body { padding: 0.8rem 1rem 1.2rem; background: rgba(0,0,0,0.4); }
+  .rarity-chars { list-style: none; }
+  .rarity-chars li {
+    font-size: 0.75rem; color: #888; padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rarity-chars li:last-child { border-bottom: none; }
+  .rarity-card.common .rarity-header { background: #1a1a1a; }
+  .rarity-card.common .rarity-name, .rarity-card.common .rarity-price { color: var(--common); }
+  .rarity-card.common:hover { border-color: var(--common); }
+  .rarity-card.uncommon .rarity-header { background: #0d1f0e; }
+  .rarity-card.uncommon .rarity-name, .rarity-card.uncommon .rarity-price { color: var(--uncommon); }
+  .rarity-card.uncommon:hover { border-color: var(--uncommon); }
+  .rarity-card.rare .rarity-header { background: #0a1628; }
+  .rarity-card.rare .rarity-name, .rarity-card.rare .rarity-price { color: var(--rare); }
+  .rarity-card.rare:hover { border-color: var(--rare); }
+  .rarity-card.epic .rarity-header { background: #150a1e; }
+  .rarity-card.epic .rarity-name, .rarity-card.epic .rarity-price { color: var(--epic); }
+  .rarity-card.epic:hover { border-color: var(--epic); }
+  .rarity-card.legendary .rarity-header { background: #1e1000; }
+  .rarity-card.legendary .rarity-name, .rarity-card.legendary .rarity-price { color: var(--legendary); }
+  .rarity-card.legendary:hover { border-color: var(--legendary); }
+
+  /* ── HOW IT WORKS ── */
+  .how { padding: 6rem 2rem; }
+  .how-inner { max-width: 900px; margin: 0 auto; }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem; margin-top: 3rem;
+  }
+  .step {
+    display: flex; flex-direction: column; gap: 1rem;
+    padding: 2rem; border-radius: 8px;
+    background: #0f0f0f; border: 1px solid #1a1a1a;
+    transition: border-color 0.2s;
+  }
+  .step:hover { border-color: var(--red); }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem; line-height: 1; color: #1f1f1f;
+  }
+  .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; }
+  .step-body { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+  /* ── PAINT SECTION ── */
+  .paint-section {
+    padding: 6rem 2rem;
+    background: linear-gradient(180deg, var(--black) 0%, #080808 100%);
+    text-align: center;
+  }
+  .paint-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem; max-width: 800px; margin: 3rem auto 0;
+  }
+  .paint-tip {
+    padding: 1.5rem 1rem;
+    background: #0f0f0f; border-radius: 8px;
+    border: 1px solid #1a1a1a;
+  }
+  .paint-tip-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .paint-tip-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; margin-bottom: 0.4rem; }
+  .paint-tip-body { font-size: 0.78rem; color: #666; line-height: 1.5; }
+
+  /* ── WHERE TO BUY ── */
+  .buy {
+    padding: 6rem 2rem;
+    background: #050505;
+  }
+  .buy-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+  .buy-options {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .buy-option {
+    padding: 2rem 1.5rem; border-radius: 8px;
+    background: #0f0f0f; border: 1px solid #1a1a1a;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .buy-option:hover { border-color: #333; transform: translateY(-4px); }
+  .buy-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .buy-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .buy-body { font-size: 0.85rem; color: #666; line-height: 1.6; }
+  .buy-link {
+    display: inline-block; margin-top: 0.8rem;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px; font-size: 0.9rem;
+    color: var(--red); text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .buy-link:hover { border-color: var(--red); }
+
+  /* ── QR SECTION ── */
+  .qr-section {
+    padding: 4rem 2rem;
+    background: var(--red);
+    text-align: center;
+  }
+  .qr-section .section-title { color: var(--black); }
+  .qr-section .section-body { color: rgba(0,0,0,0.6); }
+  .qr-section .section-body strong { color: var(--black); }
+  .qr-boxes {
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+    justify-content: center; margin-top: 2.5rem;
+  }
+  .qr-box {
+    width: 120px; padding: 1rem;
+    background: var(--black); border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  .qr-placeholder {
+    width: 80px; height: 80px;
+    background: #1a1a1a; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; color: #444; text-align: center; letter-spacing: 1px;
+  }
+  .qr-label { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.8rem; }
+  .qr-label.common { color: var(--common); }
+  .qr-label.uncommon { color: var(--uncommon); }
+  .qr-label.rare { color: var(--rare); }
+  .qr-label.epic { color: var(--epic); }
+  .qr-label.legendary { color: var(--legendary); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 2rem;
+    background: var(--black);
+    border-top: 1px solid #111;
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 4px; color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+  .footer-tagline { font-size: 0.8rem; color: #333; letter-spacing: 3px; text-transform: uppercase; }
+  .footer-links {
+    display: flex; gap: 2rem; justify-content: center;
+    margin: 1.5rem 0; flex-wrap: wrap;
+  }
+  .footer-links a {
+    font-size: 0.8rem; color: #444; text-decoration: none; letter-spacing: 2px;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { font-size: 0.75rem; color: #222; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #111;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 3px; color: var(--white);
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--red); }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 0.8rem; color: #555; text-decoration: none;
+    letter-spacing: 2px; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+  /* ── SERIES BADGE ── */
+  .series-stamp {
+    display: inline-block;
+    border: 2px solid #222;
+    padding: 4px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 4px; font-size: 0.75rem; color: #444;
+    border-radius: 2px; margin-bottom: 3rem;
+  }
+
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .hero-title { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">PAINT THE <span>BRAINROT</span></a>
+  <div class="nav-links">
+    <a href="#rarities">Rarities</a>
+    <a href="#how">How It Works</a>
+    <a href="#paint">Painting</a>
+    <a href="#buy">Get Yours</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-marks">
+    <!-- 96 question marks -->
+    <script>document.currentScript.insertAdjacentHTML('afterend', Array(96).fill('<span>?</span>').join(''))</script>
+  </div>
+  <div class="hero-badge">SERIES 1 — 40 CHARACTERS</div>
+  <h1 class="hero-title">
+    <span class="paint">PAINT</span>
+    <span class="the">THE</span>
+    <span class="brainrot">BRAINROT</span>
+  </h1>
+  <p class="hero-sub">
+    <strong>Blind-bag mystery figures.</strong> 5 rarities. 40 characters straight from the Italian brainrot universe. Collect them blank — then paint them however you want.
+  </p>
+  <div class="hero-cta">
+    <a href="#buy" class="btn btn-primary">Get a Mystery Bag</a>
+    <a href="#rarities" class="btn btn-secondary">See All Rarities</a>
+  </div>
+  <div class="hero-scroll">scroll ↓</div>
+</section>
+
+<!-- MYSTERY BAG -->
+<section class="mystery">
+  <div class="section-label">THE PRODUCT</div>
+  <h2 class="section-title">You Don't Know<br>What's Inside</h2>
+  <p class="section-body">
+    Every bag is sealed with <strong>no hints</strong>. You could pull a $2 Common or a $20 Legendary. Scan the QR on the back to check rarity rates, painting guides, and the full character gallery.
+  </p>
+  <div class="bag-visual">
+    <div class="bag-qmarks">????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????</div>
+    <div class="bag-center">
+      <div class="bag-brand">PAINT THE BRAINROT</div>
+      <div class="bag-big-q">?</div>
+      <div class="bag-sub">Mystery Figure Inside</div>
+    </div>
+  </div>
+  <p class="section-body" style="margin-bottom:0">
+    Each figure is <strong>7–8cm tall</strong>, printed in crisp white PLA. The back of every bag shows all 8 characters in the series — yours is one of them. Which one? Open it and find out.
+  </p>
+</section>
+
+<!-- RARITIES -->
+<section class="rarities" id="rarities">
+  <div class="rarities-inner">
+    <div class="section-label" style="text-align:center">RARITY SYSTEM</div>
+    <h2 class="section-title" style="text-align:center">5 Tiers.<br>40 Characters.</h2>
+    <div class="rarities-grid">
+
+      <div class="rarity-card common">
+        <div class="rarity-header">
+          <div class="rarity-sym">⚪</div>
+          <div class="rarity-name">Common</div>
+          <div class="rarity-price">$2</div>
+        </div>
+        <div class="rarity-body">
+          <ul class="rarity-chars">
+            <li>Noobini Pizzanini</li><li>Lirili Larila</li><li>Trippi Troppi</li>
+            <li>Boneca Ambalabu</li><li>Bandito Bobritto</li><li>Gangster Footera</li>
+            <li>Pipi Kiwi</li><li>Racooni Jandelini</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rarity-card uncommon">
+        <div class="rarity-header">
+          <div class="rarity-sym">🟢</div>
+          <div class="rarity-name">Uncommon</div>
+          <div class="rarity-price">$4</div>
+        </div>
+        <div class="rarity-body">
+          <ul class="rarity-chars">
+            <li>Cappuccino Assassino</li><li>Brr Brr Patapim</li><li>Bananita Dolphinita</li>
+            <li>Frogo Elfo</li><li>Avocadini Guffo</li><li>Salamino Penguino</li>
+            <li>Penguin Tree</li><li>Cacto Hipopotamo</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rarity-card rare">
+        <div class="rarity-header">
+          <div class="rarity-sym">🔵</div>
+          <div class="rarity-name">Rare</div>
+          <div class="rarity-price">$8</div>
+        </div>
+        <div class="rarity-body">
+          <ul class="rarity-chars">
+            <li>Trulimero Trulicina</li><li>Bambini Crostini</li><li>Brri Brri Bicus Dicus</li>
+            <li>Perochello Lemonchello</li><li>Ta Ta Ta Sahur</li><li>Tric Trac Baraboom</li>
+            <li>Pipi Avocado</li><li>Svinia Bombardino</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rarity-card epic">
+        <div class="rarity-header">
+          <div class="rarity-sym">🟣</div>
+          <div class="rarity-name">Epic</div>
+          <div class="rarity-price">$16</div>
+        </div>
+        <div class="rarity-body">
+          <ul class="rarity-chars">
+            <li>Penguino Cocosino</li><li>Ti Ti Ti Sahur</li><li>Talpa Di Fero</li>
+            <li>TIM Cheese</li><li>FluriFlura</li><li>Pipi Corni</li>
+            <li>Noobini Santanini</li><li>Tric Trac Ultra</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rarity-card legendary">
+        <div class="rarity-header">
+          <div class="rarity-sym">🟡</div>
+          <div class="rarity-name">Legendary</div>
+          <div class="rarity-price">$20</div>
+        </div>
+        <div class="rarity-body">
+          <ul class="rarity-chars">
+            <li>Bombardino Crocodilo</li><li>Tralalero Tralala</li><li>Ballerina Cappuccina</li>
+            <li>Giraffa Assassina</li><li>Lirilì Larilà Ultra</li><li>Bombombini Gusini</li>
+            <li>Orangutan Tung Tung</li><li>Talpa Supremo</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+    <p style="text-align:center;color:#333;font-size:0.8rem;margin-top:1.5rem;letter-spacing:2px;text-transform:uppercase">Each rarity has exactly 8 unique characters · Figures are 7–8cm · White PLA · Unpainted</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-label" style="text-align:center">HOW IT WORKS</div>
+    <h2 class="section-title" style="text-align:center">Simple. Stupid.<br>Addictive.</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Pick a Bag</div>
+        <div class="step-body">Choose a rarity tier or go full mystery. Each sealed foil bag hides one figure. No peeking.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Open & Reveal</div>
+        <div class="step-body">Tear it open. Which of the 8 characters did you get? Check the back of the bag to find out which one's yours.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Paint or Display</div>
+        <div class="step-body">Leave it crisp white, or grab your paints. Scan the QR code for color guides and community paint-alongs.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Collect 'Em All</div>
+        <div class="step-body">40 characters across 5 rarities. The Legendary tier has the rarest figures. How many can you get?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAINTING TIPS -->
+<section class="paint-section" id="paint">
+  <div class="section-label">PAINTING GUIDE</div>
+  <h2 class="section-title">Your Figure.<br>Your Colors.</h2>
+  <p class="section-body">No painting experience needed. The blank white surface is perfect for any paint. Scan the QR on your bag for step-by-step guides per character.</p>
+  <div class="paint-grid">
+    <div class="paint-tip">
+      <div class="paint-tip-icon">🎨</div>
+      <div class="paint-tip-title">Acrylic Paint</div>
+      <div class="paint-tip-body">Standard acrylics work great on PLA. Any brand, any color.</div>
+    </div>
+    <div class="paint-tip">
+      <div class="paint-tip-icon">⬜</div>
+      <div class="paint-tip-title">Base Coat First</div>
+      <div class="paint-tip-body">One thin white or grey primer coat makes colors pop more.</div>
+    </div>
+    <div class="paint-tip">
+      <div class="paint-tip-icon">🔍</div>
+      <div class="paint-tip-title">Small Brushes</div>
+      <div class="paint-tip-body">Size 0 or 00 brushes for the fine details and faces.</div>
+    </div>
+    <div class="paint-tip">
+      <div class="paint-tip-icon">✨</div>
+      <div class="paint-tip-title">Seal It</div>
+      <div class="paint-tip-body">Matte varnish spray on top to protect your work forever.</div>
+    </div>
+    <div class="paint-tip">
+      <div class="paint-tip-icon">📱</div>
+      <div class="paint-tip-title">Scan QR</div>
+      <div class="paint-tip-body">Each bag QR links to color guides and inspiration for that exact character.</div>
+    </div>
+  </div>
+</section>
+
+<!-- QR CODES -->
+<section class="qr-section">
+  <div class="section-label" style="color:rgba(0,0,0,0.4)">ON THE BACK OF EVERY BAG</div>
+  <h2 class="section-title">Scan for Everything</h2>
+  <p class="section-body">Each rarity has its own QR code linking to painting tutorials, the full character gallery, and where to buy more.</p>
+  <div class="qr-boxes">
+    <div class="qr-box">
+      <div class="qr-placeholder">COMMON<br>QR</div>
+      <div class="qr-label common">Common</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">UNCOMMON<br>QR</div>
+      <div class="qr-label uncommon">Uncommon</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">RARE<br>QR</div>
+      <div class="qr-label rare">Rare</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">EPIC<br>QR</div>
+      <div class="qr-label epic">Epic</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">LEGENDARY<br>QR</div>
+      <div class="qr-label legendary">Legendary</div>
+    </div>
+  </div>
+  <p style="margin-top:2rem;font-size:0.8rem;color:rgba(0,0,0,0.4);letter-spacing:2px;text-transform:uppercase">Replace QR placeholders with your actual generated codes before printing</p>
+</section>
+
+<!-- WHERE TO BUY -->
+<section class="buy" id="buy">
+  <div class="buy-inner">
+    <div class="section-label">WHERE TO GET THEM</div>
+    <h2 class="section-title">Find Us<br>in Lebanon</h2>
+    <p class="section-body">Series 1 is available locally. DM us to reserve yours before they're gone.</p>
+    <div class="buy-options">
+      <div class="buy-option">
+        <div class="buy-icon">📱</div>
+        <div class="buy-title">Instagram DMs</div>
+        <div class="buy-body">Fastest way to order. Fresh USD only. We ship locally across Lebanon.</div>
+        <a href="https://instagram.com/paintthebrainrot" class="buy-link" target="_blank">@paintthebrainrot →</a>
+      </div>
+      <div class="buy-option">
+        <div class="buy-icon">🏪</div>
+        <div class="buy-title">Campus Markets</div>
+        <div class="buy-body">Find us at AUB, LAU & NDU student markets. Follow Instagram for dates.</div>
+        <a href="#" class="buy-link">Upcoming Dates →</a>
+      </div>
+      <div class="buy-option">
+        <div class="buy-icon">💬</div>
+        <div class="buy-title">WhatsApp</div>
+        <div class="buy-body">Message us directly for bulk orders, birthday packages, or custom figures.</div>
+        <a href="https://wa.me/961XXXXXXXX" class="buy-link" target="_blank">Message Us →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">PAINT THE BRAINROT</div>
+  <div class="footer-tagline">Series 1 · Lebanon · 40 Characters · 5 Rarities</div>
+  <div class="footer-links">
+    <a href="#rarities">Rarities</a>
+    <a href="#how">How It Works</a>
+    <a href="#paint">Painting Tips</a>
+    <a href="#buy">Get Yours</a>
+    <a href="https://instagram.com/paintthebrainrot" target="_blank">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2026 Paint the Brainrot · Handmade in Lebanon</div>
+</footer>
+
+<script>
+  // Smooth nav appearance on scroll
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.borderBottomColor = window.scrollY > 50 ? '#1a1a1a' : '#111';
+  });
+
+  // Stagger rarity cards on scroll into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.animation = `fadeDown 0.5s ease ${i * 0.08}s both`;
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.rarity-card, .step, .buy-option, .paint-tip').forEach(el => {
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
