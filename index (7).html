@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paint the Brainrot — Series 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;900&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FFE234;
+  --red: #FF3B3B;
+  --orange: #FF8C00;
+  --green: #00E676;
+  --blue: #00B0FF;
+  --purple: #D500F9;
+  --pink: #FF4081;
+  --white: #FFFEF5;
+  --black: #0D0D0D;
+  --ink: #1a1a1a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23FF3B3B' stroke='%23000' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23FFE234'/%3E%3C/svg%3E") 12 12, auto;
+}
+
+/* ─── CUSTOM CURSOR ─── */
+.cursor-dot {
+  width: 12px; height: 12px;
+  background: var(--red);
+  border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: multiply;
+  transition: transform 0.1s;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: var(--black);
+  border-bottom: 4px solid var(--yellow);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Boogaloo', cursive;
+  font-size: 1.5rem;
+  color: var(--yellow);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+.nav-logo span { color: var(--red); }
+.nav-links { display: flex; gap: 0.2rem; }
+.nav-links a {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.65rem;
+  color: var(--white);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  letter-spacing: 1px;
+}
+.nav-links a:hover { border-color: var(--yellow); color: var(--yellow); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  padding-top: 60px;
+  background: var(--black);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated confetti background */
+.hero-bg {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.confetti-piece {
+  position: absolute;
+  border-radius: 2px;
+  animation: confettiFall linear infinite;
+  opacity: 0.6;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 0.7; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.hero-left {
+  padding: 4rem 3rem 4rem 5rem;
+  position: relative; z-index: 2;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--black);
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 3px;
+  margin-bottom: 1.5rem;
+  animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes badgePop { from { transform: scale(0) rotate(-10deg); } to { transform: scale(1) rotate(0deg); } }
+
+.hero-title {
+  font-family: 'Boogaloo', cursive;
+  font-size: clamp(3.5rem, 6vw, 6.5rem);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  animation: slideUp 0.6s ease 0.1s both;
+}
+@keyframes slideUp { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform:translateY(0); } }
+
+.hero-title .paint { color: var(--white); display: block; }
+.hero-title .the {
+  color: #555;
+  font-size: 0.35em;
+  letter-spacing: 6px;
+  display: block;
+  margin: 0.2em 0;
+}
+.hero-title .brainrot {
+  display: block;
+  background: linear-gradient(135deg, var(--red), var(--orange), var(--yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(3px 3px 0 rgba(255,60,0,0.3));
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: #999;
+  line-height: 1.7;
+  max-width: 420px;
+  margin-bottom: 2.5rem;
+  animation: slideUp 0.6s ease 0.2s both;
+}
+.hero-sub strong { color: var(--yellow); }
+
+.hero-cta {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  animation: slideUp 0.6s ease 0.3s both;
+}
+
+.btn {
+  font-family: 'Boogaloo', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  padding: 14px 32px;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; right: -5px;
+  width: 100%; height: 100%;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  z-index: -1;
+  transition: bottom 0.15s, right 0.15s;
+}
+.btn:hover { transform: translate(-2px,-2px); }
+.btn:hover::after { bottom: -7px; right: -7px; }
+.btn:active { transform: translate(1px,1px); }
+.btn:active::after { bottom: -2px; right: -2px; }
+
+.btn-primary { background: var(--yellow); color: var(--black); border-color: var(--black); }
+.btn-primary::after { background: var(--orange); }
+.btn-secondary { background: transparent; color: var(--white); border-color: #444; }
+.btn-secondary:hover { border-color: var(--white); }
+
+/* ─── HERO RIGHT: 6x6 FIGURINE GRID ─── */
+.hero-right {
+  position: relative; z-index: 2;
+  padding: 2rem 3rem 2rem 1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.figurine-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  max-width: 380px;
+  width: 100%;
+}
+
+.fig-cell {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  border: 2px solid rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+.fig-cell:hover { transform: scale(1.18) rotate(-2deg); z-index: 10; }
+.fig-cell:hover .fig-shine { opacity: 1; }
+
+.fig-shine {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.fig-emoji { font-size: clamp(1.2rem, 2.5vw, 1.8rem); line-height: 1; position: relative; z-index:1; }
+.fig-name {
+  font-family: 'Silkscreen', monospace;
+  font-size: clamp(0.3rem, 0.7vw, 0.45rem);
+  text-align: center;
+  line-height: 1.2;
+  position: relative; z-index: 1;
+  padding: 0 2px;
+  opacity: 0.85;
+}
+
+/* Rarity colors */
+.fig-common { background: linear-gradient(135deg, #e8e8e8, #c8c8c8); color: #333; }
+.fig-uncommon { background: linear-gradient(135deg, #c8ffd4, #5cd66e); color: #0a3d12; }
+.fig-rare { background: linear-gradient(135deg, #c8e8ff, #4aadff); color: #002244; }
+.fig-epic { background: linear-gradient(135deg, #ecc8ff, #cc44ff); color: #2d003d; }
+.fig-legendary { background: linear-gradient(135deg, #fff3c8, #ffa820); color: #3d1a00; }
+
+/* Rarity pulse ring on hover */
+.fig-cell.fig-legendary:hover { box-shadow: 0 0 0 3px var(--orange), 0 0 20px var(--orange); }
+.fig-cell.fig-epic:hover { box-shadow: 0 0 0 3px var(--purple), 0 0 20px var(--purple); }
+.fig-cell.fig-rare:hover { box-shadow: 0 0 0 3px var(--blue), 0 0 20px var(--blue); }
+.fig-cell.fig-uncommon:hover { box-shadow: 0 0 0 3px var(--green), 0 0 20px var(--green); }
+.fig-cell.fig-common:hover { box-shadow: 0 0 0 3px #aaa, 0 0 20px #aaa; }
+
+/* Grid entrance animation */
+.fig-cell { animation: figPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* ─── SCROLL TICKER ─── */
+.ticker {
+  background: var(--yellow);
+  border-top: 4px solid var(--black);
+  border-bottom: 4px solid var(--black);
+  padding: 12px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-flex; gap: 3rem;
+  animation: tickerScroll 25s linear infinite;
+}
+.ticker-inner span {
+  font-family: 'Boogaloo', cursive;
+  font-size: 1.2rem;
+  color: var(--black);
+  letter-spacing: 1px;
+}
+@keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─── SECTION SHARED ─── */
+section { padding: 6rem 2rem; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+
+.section-tag {
+  display: inline-block;
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  padding: 5px 12px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.tag-red { background: var(--red); color: var(--white); }
+.tag-blue { background: var(--blue); color: var(--black); }
+.tag-green { background: var(--green); color: var(--black); }
+.tag-purple { background: var(--purple); color: var(--white); }
+.tag-orange { background: var(--orange); color: var(--black); }
+
+.section-title {
+  font-family: 'Boogaloo', cursive;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+.section-sub { font-size: 1.05rem; color: #666; line-height: 1.7; max-width: 600px; }
+
+/* ─── CHARACTERS SHOWCASE ─── */
+.chars-section { background: var(--black); color: var(--white); }
+.chars-section .section-sub { color: #888; }
+.chars-section .section-title { color: var(--white); }
+
+.chars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.2rem;
+  margin-top: 3rem;
+}
+
+.char-card {
+  border-radius: 16px;
+  padding: 1.5rem 1rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,0.1);
+}
+.char-card:hover { transform: translateY(-8px) rotate(-1deg); }
+.char-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+
+.char-card.legendary { background: linear-gradient(160deg, #2a1a00, #1a1000); }
+.char-card.legendary::before { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+.char-card.legendary:hover { box-shadow: 0 20px 40px rgba(255,165,0,0.3); border-color: var(--orange); }
+
+.char-card.epic { background: linear-gradient(160deg, #1e0030, #120020); }
+.char-card.epic::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+.char-card.epic:hover { box-shadow: 0 20px 40px rgba(180,0,255,0.3); border-color: var(--purple); }
+
+.char-card.rare { background: linear-gradient(160deg, #001a30, #000f20); }
+.char-card.rare::before { background: linear-gradient(90deg, var(--blue), #0044ff); }
+.char-card.rare:hover { box-shadow: 0 20px 40px rgba(0,160,255,0.3); border-color: var(--blue); }
+
+.char-card.uncommon { background: linear-gradient(160deg, #001a08, #000f04); }
+.char-card.uncommon::before { background: linear-gradient(90deg, var(--green), #00aa44); }
+.char-card.uncommon:hover { box-shadow: 0 20px 40px rgba(0,230,118,0.3); border-color: var(--green); }
+
+.char-card.common { background: linear-gradient(160deg, #1a1a1a, #111); }
+.char-card.common::before { background: linear-gradient(90deg, #aaa, #666); }
+.char-card.common:hover { box-shadow: 0 20px 40px rgba(180,180,180,0.2); border-color: #888; }
+
+.char-emoji { font-size: 3.5rem; display: block; margin-bottom: 0.8rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+.char-name { font-family: 'Boogaloo', cursive; font-size: 1rem; color: var(--white); margin-bottom: 0.3rem; line-height: 1.2; }
+.char-desc { font-size: 0.72rem; color: #666; line-height: 1.4; }
+
+.char-rarity-badge {
+  position: absolute; top: 12px; right: 10px;
+  font-family: 'Silkscreen', monospace; font-size: 0.5rem;
+  padding: 3px 6px; border-radius: 3px; letter-spacing: 1px;
+}
+.badge-legendary { background: var(--orange); color: var(--black); }
+.badge-epic { background: var(--purple); color: var(--white); }
+.badge-rare { background: var(--blue); color: var(--black); }
+.badge-uncommon { background: var(--green); color: var(--black); }
+.badge-common { background: #666; color: var(--white); }
+
+/* ─── PAINT TOOLS SECTION ─── */
+.tools-section {
+  background: linear-gradient(160deg, #fff9e6, #fff3cc);
+  position: relative;
+  overflow: hidden;
+}
+.tools-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,140,0,0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.tool-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border: 3px solid var(--black);
+  box-shadow: 5px 5px 0 var(--black);
+  transition: transform 0.15s, box-shadow 0.15s;
+  position: relative;
+  cursor: default;
+}
+.tool-card:hover { transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--black); }
+
+.tool-visual {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  line-height: 1;
+  animation: toolWiggle 3s ease-in-out infinite;
+}
+.tool-card:nth-child(2) .tool-visual { animation-delay: -1s; }
+.tool-card:nth-child(3) .tool-visual { animation-delay: -2s; }
+.tool-card:nth-child(4) .tool-visual { animation-delay: -0.5s; }
+.tool-card:nth-child(5) .tool-visual { animation-delay: -1.5s; }
+
+@keyframes toolWiggle {
+  0%,100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.tool-name {
+  font-family: 'Boogaloo', cursive;
+  font-size: 1.4rem;
+  color: var(--black);
+  margin-bottom: 0.4rem;
+}
+.tool-tip {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+}
+.tool-badge {
+  position: absolute;
+  top: -10px; right: -10px;
+  background: var(--red);
+  color: var(--white);
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.5rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 2px solid var(--black);
+  letter-spacing: 1px;
+}
+.tool-card:nth-child(1) .tool-badge { background: var(--blue); }
+.tool-card:nth-child(2) .tool-badge { background: var(--orange); }
+.tool-card:nth-child(3) .tool-badge { background: var(--green); color: var(--black); }
+.tool-card:nth-child(4) .tool-badge { background: var(--purple); }
+.tool-card:nth-child(5) .tool-badge { background: var(--red); }
+
+/* ─── MYSTERY BAG SECTION ─── */
+.bag-section {
+  background: var(--black);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.bag-section::before {
+  content: '? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?';
+  position: absolute; inset: 0;
+  font-family: 'Boogaloo', cursive;
+  font-size: 3rem;
+  color: rgba(255,226,52,0.04);
+  word-break: break-all;
+  line-height: 1.2;
+  pointer-events: none;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.bag-showcase {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 4rem;
+}
+
+.bag-visual-main {
+  grid-column: 2;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.bag-3d {
+  width: 220px; height: 300px;
+  background: linear-gradient(145deg, #2a2a2a, #111, #2a2a2a);
+  border-radius: 18px;
+  border: 3px solid #333;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+  animation: bagBob 3s ease-in-out infinite;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.bag-3d:hover { transform: scale(1.05) rotate(2deg); }
+.bag-3d::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent 0, transparent 15px, rgba(255,226,52,0.03) 15px, rgba(255,226,52,0.03) 16px);
+}
+@keyframes bagBob { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-14px) rotate(1.5deg)} }
+
+.bag-seal {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 65px;
+  background: linear-gradient(180deg, #222, #1a1a1a);
+  border-bottom: 3px solid var(--yellow);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.bag-brand-top { font-family: 'Silkscreen', monospace; font-size: 0.5rem; color: #666; letter-spacing: 3px; }
+.bag-brand-main { font-family: 'Boogaloo', cursive; font-size: 1.2rem; color: var(--yellow); letter-spacing: 2px; }
+
+.bag-center-q {
+  font-family: 'Boogaloo', cursive;
+  font-size: 9rem;
+  color: var(--yellow);
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(255,226,52,0.5), 4px 4px 0 rgba(255,140,0,0.4);
+  position: relative; z-index: 2;
+  animation: qPulse 2s ease-in-out infinite;
+  margin-top: 20px;
+}
+@keyframes qPulse { 0%,100%{text-shadow:0 0 40px rgba(255,226,52,0.5),4px 4px 0 rgba(255,140,0,0.4)} 50%{text-shadow:0 0 70px rgba(255,226,52,0.8),4px 4px 0 rgba(255,140,0,0.6)} }
+
+.bag-bottom-strip {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 50px;
+  background: var(--yellow);
+  display: flex; align-items: center; justify-content: center;
+}
+.bag-price { font-family: 'Boogaloo', cursive; font-size: 1.8rem; color: var(--black); }
+
+.bag-info-left, .bag-info-right {
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+
+.bag-info-item {
+  background: #111;
+  border: 2px solid #222;
+  border-radius: 12px;
+  padding: 1.2rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.bag-info-item:hover { border-color: var(--yellow); transform: translateX(4px); }
+.bag-info-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.bag-info-title { font-family: 'Boogaloo', cursive; font-size: 1.1rem; color: var(--yellow); margin-bottom: 0.3rem; }
+.bag-info-desc { font-size: 0.82rem; color: #777; line-height: 1.5; }
+
+/* ─── RARITY SECTION ─── */
+.rarity-section {
+  background: linear-gradient(160deg, #f0f7ff, #e8f4ff);
+  position: relative;
+}
+
+
+.rarity-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 3rem;
+}
+
+.rar-row {
+  display: grid;
+  grid-template-columns: 140px repeat(5, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+/* Left label tile */
+.rar-label {
+  border-radius: 16px;
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.3rem; padding: 1rem 0.5rem;
+}
+.rar-label .rar-sym { font-size: 2rem; }
+.rar-label .rar-name { font-family: 'Boogaloo', cursive; font-size: 1.1rem; letter-spacing: 1px; line-height: 1; text-align: center; }
+.rar-label .rar-price { font-family: 'Boogaloo', cursive; font-size: 2rem; line-height: 1; }
+
+/* Individual character tile */
+.rar-char-card {
+  border-radius: 14px;
+  border: 3px solid var(--black);
+  box-shadow: 3px 3px 0 var(--black);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
+  background: rgba(255,255,255,0.95);
+}
+.rar-char-card:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: 5px 9px 0 var(--black); }
+
+.rar-char-top {
+  padding: 1rem 0.75rem 0.6rem;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  text-align: center;
+}
+.rar-char-emoji { font-size: 2.2rem; line-height: 1; }
+.rar-char-name { font-family: 'Boogaloo', cursive; font-size: 0.9rem; line-height: 1.2; text-align: center; }
+
+.rar-char-bottom {
+  margin-top: auto;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.65rem;
+  color: #666;
+  border-top: 2px solid rgba(0,0,0,0.08);
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Row colour themes */
+.rar-row-common .rar-label { background: linear-gradient(135deg, #e0e0e0, #c0c0c0); }
+.rar-row-common .rar-label .rar-name,
+.rar-row-common .rar-label .rar-price { color: #333; }
+.rar-row-common .rar-char-top { background: linear-gradient(160deg, #f0f0f0, #e4e4e4); }
+.rar-row-common .rar-char-name { color: #333; }
+
+.rar-row-uncommon .rar-label { background: linear-gradient(135deg, #a5ffbd, #00c853); }
+.rar-row-uncommon .rar-label .rar-name,
+.rar-row-uncommon .rar-label .rar-price { color: #003d12; }
+.rar-row-uncommon .rar-char-top { background: linear-gradient(160deg, #d4ffe0, #b8f5c8); }
+.rar-row-uncommon .rar-char-name { color: #003d12; }
+
+.rar-row-rare .rar-label { background: linear-gradient(135deg, #a5d4ff, #0077ff); }
+.rar-row-rare .rar-label .rar-name,
+.rar-row-rare .rar-label .rar-price { color: #001a44; }
+.rar-row-rare .rar-char-top { background: linear-gradient(160deg, #d4ecff, #b8daff); }
+.rar-row-rare .rar-char-name { color: #001a44; }
+
+.rar-row-epic .rar-label { background: linear-gradient(135deg, #e0a5ff, #aa00ff); }
+.rar-row-epic .rar-label .rar-name,
+.rar-row-epic .rar-label .rar-price { color: #1a003d; }
+.rar-row-epic .rar-char-top { background: linear-gradient(160deg, #f0d4ff, #e4b8ff); }
+.rar-row-epic .rar-char-name { color: #1a003d; }
+
+.rar-row-legendary .rar-label { background: linear-gradient(135deg, #ffe980, #ff8c00); }
+.rar-row-legendary .rar-label .rar-name,
+.rar-row-legendary .rar-label .rar-price { color: #3d1a00; }
+.rar-row-legendary .rar-char-top { background: linear-gradient(160deg, #fff3c8, #ffe490); }
+.rar-row-legendary .rar-char-name { color: #3d1a00; }
+
+@media (max-width: 900px) {
+  .rar-row { grid-template-columns: 100px repeat(5, 1fr); gap: 0.4rem; }
+  .rar-label { padding: 0.6rem 0.3rem; }
+  .rar-label .rar-sym { font-size: 1.4rem; }
+  .rar-label .rar-name { font-size: 0.75rem; }
+  .rar-label .rar-price { font-size: 1.4rem; }
+  .rar-char-emoji { font-size: 1.6rem; }
+  .rar-char-name { font-size: 0.7rem; }
+  .rar-char-bottom { display: none; }
+}
+@media (max-width: 600px) {
+  .rar-row { grid-template-columns: 70px repeat(5, 1fr); gap: 0.3rem; }
+  .rar-label .rar-price { font-size: 1.1rem; }
+  .rar-char-top { padding: 0.5rem 0.3rem 0.4rem; }
+}
+
+/* ─── HOW IT WORKS ─── */
+.how-section { background: var(--black); color: var(--white); }
+.how-section .section-title { color: var(--white); }
+
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 4rem;
+  position: relative;
+}
+.steps-row::before {
+  content: '';
+  position: absolute; top: 55px; left: 10%; right: 10%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--yellow), var(--red), var(--purple), var(--blue));
+  border-radius: 2px;
+  z-index: 0;
+}
+
+.step-item {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 0 1rem;
+  position: relative; z-index: 1;
+}
+.step-num {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  border: 4px solid var(--black);
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.step-item:hover .step-num { transform: scale(1.15) rotate(-5deg); }
+.step-item:nth-child(1) .step-num { background: var(--yellow); }
+.step-item:nth-child(2) .step-num { background: var(--red); }
+.step-item:nth-child(3) .step-num { background: var(--blue); }
+.step-item:nth-child(4) .step-num { background: var(--green); }
+.step-title { font-family: 'Boogaloo', cursive; font-size: 1.4rem; color: var(--white); margin-bottom: 0.5rem; }
+.step-desc { font-size: 0.85rem; color: #666; line-height: 1.6; max-width: 180px; }
+
+/* ─── WHERE TO BUY ─── */
+.buy-section {
+  background: linear-gradient(160deg, var(--yellow), var(--orange));
+  color: var(--black);
+}
+.buy-section .section-title { color: var(--black); }
+
+.buy-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.buy-card {
+  background: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 5px 5px 0 var(--black);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.buy-card:hover { transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--black); }
+.buy-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+.buy-title { font-family: 'Boogaloo', cursive; font-size: 1.5rem; margin-bottom: 0.5rem; }
+.buy-desc { font-size: 0.9rem; color: #555; line-height: 1.6; margin-bottom: 1rem; }
+.buy-link {
+  display: inline-block;
+  font-family: 'Boogaloo', cursive;
+  font-size: 1rem;
+  color: var(--black);
+  text-decoration: none;
+  border-bottom: 3px solid var(--red);
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+.buy-link:hover { color: var(--red); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--black);
+  border-top: 5px solid var(--yellow);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--white);
+}
+.footer-logo {
+  font-family: 'Boogaloo', cursive;
+  font-size: 2.5rem;
+  color: var(--yellow);
+  margin-bottom: 0.5rem;
+}
+.footer-logo span { color: var(--red); }
+.footer-sub { font-size: 0.8rem; color: #444; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2rem; font-family: 'Silkscreen', monospace; }
+.footer-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+.footer-links a { font-size: 0.85rem; color: #555; text-decoration: none; transition: color 0.2s; font-family: 'Silkscreen', monospace; font-size: 0.6rem; letter-spacing: 2px; }
+.footer-links a:hover { color: var(--yellow); }
+.footer-copy { font-size: 0.75rem; color: #333; font-family: 'Silkscreen', monospace; letter-spacing: 1px; }
+
+/* ─── FLOATING PAINT SPLAT DECO ─── */
+.splat {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+/* ─── SCROLL REVEAL ─── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── CHARACTER MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--black);
+  border-radius: 24px;
+  border: 4px solid var(--yellow);
+  max-width: 480px; width: 100%;
+  position: relative;
+  transform: scale(0.8) rotate(-3deg);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 8px 8px 0 rgba(255,226,52,0.2);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.open .modal-box { transform: scale(1) rotate(0deg); }
+.modal-top {
+  padding: 2.5rem 2rem 1rem;
+  text-align: center; position: relative;
+}
+.modal-emoji {
+  font-size: 5rem; display: block; margin-bottom: 0.5rem;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+  animation: modalFloat 2s ease-in-out infinite;
+}
+@keyframes modalFloat { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-8px) rotate(3deg)} }
+.modal-rarity-bar { position: absolute; top: 0; left: 0; right: 0; height: 6px; }
+.modal-name { font-family:'Boogaloo',cursive; font-size:2rem; color:var(--white); margin-bottom:0.3rem; line-height:1.1; }
+.modal-rarity-tag { display:inline-block; font-family:'Silkscreen',monospace; font-size:0.6rem; letter-spacing:2px; padding:4px 10px; border-radius:4px; margin-bottom:0.8rem; }
+.modal-body { padding: 0 2rem 2rem; }
+.modal-desc { font-size:0.9rem; color:#888; line-height:1.6; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid #1f1f1f; }
+.modal-story-label { font-family:'Silkscreen',monospace; font-size:0.52rem; letter-spacing:3px; color:#444; margin-bottom:0.6rem; }
+.modal-story { font-size:0.88rem; color:var(--white); line-height:1.8; font-style:italic; background:#111; border-radius:12px; padding:1.2rem; border-left:4px solid var(--yellow); margin-bottom:1rem; }
+.modal-mood { display:flex; align-items:center; gap:0.5rem; font-family:'Boogaloo',cursive; font-size:1rem; color:#555; margin-bottom:1.2rem; }
+.modal-mood span { font-size:1.3rem; }
+.modal-close { position:absolute; top:14px; right:16px; background:#1a1a1a; border:2px solid #333; color:var(--white); font-family:'Boogaloo',cursive; font-size:1.2rem; width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s,border-color 0.15s,transform 0.15s; z-index:10; }
+.modal-close:hover { background:var(--red); border-color:var(--red); transform:rotate(90deg); }
+.modal-buy-btn { display:block; width:100%; background:var(--yellow); color:var(--black); font-family:'Boogaloo',cursive; font-size:1.2rem; border:3px solid var(--black); border-radius:10px; padding:12px; cursor:pointer; text-decoration:none; text-align:center; box-shadow:4px 4px 0 var(--black); transition:transform 0.15s,box-shadow 0.15s; }
+.modal-buy-btn:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--black); }
+
+/* 3D VIEWER */
+.modal-3d-wrap {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+  border-bottom: 2px solid #222;
+  overflow: hidden;
+  cursor: grab;
+}
+.modal-3d-wrap:active { cursor: grabbing; }
+#stlCanvas { display: block; width: 100%; height: 280px; }
+.modal-3d-hint {
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  text-align: center;
+  font-family: 'Silkscreen', monospace; font-size: 0.45rem; letter-spacing: 2px;
+  color: rgba(255,255,255,0.3); pointer-events: none;
+}
+.modal-3d-label {
+  position: absolute; top: 10px; left: 14px;
+  font-family: 'Boogaloo', cursive; font-size: 0.8rem;
+  color: rgba(255,255,255,0.25); pointer-events: none;
+  letter-spacing: 1px;
+}
+
+/* IMAGE VIEWER */
+.modal-3d-wrap {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+  border-bottom: 2px solid #222;
+  overflow: hidden;
+  user-select: none;
+}
+.modal-img-viewer {
+  position: relative;
+  width: 100%; height: 300px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-img-viewer img {
+  max-height: 280px; max-width: 85%;
+  object-fit: contain;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+}
+.modal-img-viewer img.switching {
+  opacity: 0; transform: scale(0.92);
+}
+.modal-view-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15);
+  color: #fff; font-size: 1.2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  z-index: 5;
+}
+.modal-view-btn:hover { background: var(--yellow); border-color: var(--yellow); color: var(--black); transform: translateY(-50%) scale(1.1); }
+.modal-view-btn.left  { left: 10px; }
+.modal-view-btn.right { right: 10px; }
+.modal-view-dots {
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 6px;
+}
+.modal-view-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.2s; padding: 0;
+}
+.modal-view-dot.active { background: var(--yellow); transform: scale(1.3); }
+.modal-view-label {
+  position: absolute; top: 10px; left: 0; right: 0; text-align: center;
+  font-family: 'Silkscreen', monospace; font-size: 0.45rem; letter-spacing: 3px;
+  color: rgba(255,255,255,0.25); pointer-events: none;
+  text-transform: uppercase;
+}
+.modal-view-hint {
+  position: absolute; bottom: 28px; left: 0; right: 0; text-align: center;
+  font-family: 'Silkscreen', monospace; font-size: 0.4rem; letter-spacing: 2px;
+  color: rgba(255,255,255,0.15); pointer-events: none;
+}
+
+.char-card { cursor:pointer; position:relative; }
+.fig-cell { cursor:pointer; }
+.tap-hint { position:absolute; bottom:6px; left:0; right:0; text-align:center; font-family:'Boogaloo',cursive; font-size:0.75rem; letter-spacing:1px; color:rgba(255,255,255,0.55); pointer-events:none; }
+.char-card:hover .tap-hint { color:rgba(255,255,255,0.9); }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 3rem 2rem 1rem; }
+  .hero-right { padding: 1rem 2rem 3rem; }
+  .figurine-grid { max-width: 300px; gap: 5px; }
+  .steps-row { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .steps-row::before { display: none; }
+  .bag-showcase { grid-template-columns: 1fr; }
+  .bag-visual-main { grid-column: 1; order: -1; }
+  .bag-info-left, .bag-info-right { flex-direction: row; flex-wrap: wrap; }
+  .bag-info-item { flex: 1; min-width: 140px; }
+  .buy-cards { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    // GLTFLoader inline (r128 compatible)
+    THREE.GLTFLoader = (function () {
+      function GLTFLoader(manager) { this.manager = manager || THREE.DefaultLoadingManager; }
+      GLTFLoader.prototype = {
+        constructor: GLTFLoader,
+        load: function (url, onLoad, onProgress, onError) {
+          var loader = new THREE.FileLoader(this.manager);
+          loader.setResponseType('arraybuffer');
+          loader.load(url, function (data) {
+            try { GLTFLoader.parse(data, '', onLoad, onError); }
+            catch (e) { if (onError) onError(e); }
+          }, onProgress, onError);
+        }
+      };
+      GLTFLoader.parse = function (data, path, onLoad, onError) {
+        var magic = new Uint8Array(data, 0, 4);
+        var str = String.fromCharCode(magic[0], magic[1], magic[2], magic[3]);
+        if (str !== 'glTF') { if (onError) onError(new Error('Not a GLB')); return; }
+        var view = new DataView(data);
+        var jsonLength = view.getUint32(12, true);
+        var jsonText = new TextDecoder().decode(new Uint8Array(data, 20, jsonLength));
+        var json = JSON.parse(jsonText);
+        var binOffset = 20 + jsonLength + 8;
+        var binLength = view.getUint32(20 + jsonLength, true);
+        var binData = data.slice(binOffset, binOffset + binLength);
+        _build(json, binData, onLoad, onError);
+      };
+      function _build(json, binData, onLoad, onError) {
+        var scene = new THREE.Group();
+        var buffers = [binData];
+        var images = [];
+        var textures = [];
+        var materials = [];
+        // Materials
+        if (json.materials) {
+          json.materials.forEach(function (mat) {
+            var m = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.8, metalness: 0.1 });
+            if (mat.pbrMetallicRoughness) {
+              var pbr = mat.pbrMetallicRoughness;
+              if (pbr.baseColorFactor) m.color.setRGB(pbr.baseColorFactor[0], pbr.baseColorFactor[1], pbr.baseColorFactor[2]);
+              if (pbr.metallicFactor !== undefined) m.metalness = pbr.metallicFactor;
+              if (pbr.roughnessFactor !== undefined) m.roughness = pbr.roughnessFactor;
+            }
+            materials.push(m);
+          });
+        }
+        function getBuffer(accessorIdx) {
+          var acc = json.accessors[accessorIdx];
+          var bv = json.bufferViews[acc.bufferView];
+          var offset = (bv.byteOffset || 0) + (acc.byteOffset || 0);
+          var compMap = { 5120:1,5121:1,5122:2,5123:2,5125:4,5126:4 };
+          var typeMap = { SCALAR:1, VEC2:2, VEC3:3, VEC4:4, MAT4:16 };
+          var bytes = compMap[acc.componentType];
+          var comps = typeMap[acc.type];
+          var len = acc.count * comps;
+          if (acc.componentType === 5126) return new Float32Array(binData, offset, len);
+          if (acc.componentType === 5123) return new Uint16Array(binData, offset, len);
+          if (acc.componentType === 5125) return new Uint32Array(binData, offset, len);
+          return new Uint8Array(binData, offset, len);
+        }
+        if (json.meshes) {
+          json.meshes.forEach(function (mesh) {
+            mesh.primitives.forEach(function (prim) {
+              var geo = new THREE.BufferGeometry();
+              if (prim.attributes.POSITION !== undefined) geo.setAttribute('position', new THREE.BufferAttribute(getBuffer(prim.attributes.POSITION), 3));
+              if (prim.attributes.NORMAL !== undefined) geo.setAttribute('normal', new THREE.BufferAttribute(getBuffer(prim.attributes.NORMAL), 3));
+              if (prim.attributes.TEXCOORD_0 !== undefined) geo.setAttribute('uv', new THREE.BufferAttribute(getBuffer(prim.attributes.TEXCOORD_0), 2));
+              if (prim.indices !== undefined) geo.setIndex(new THREE.BufferAttribute(getBuffer(prim.indices), 1));
+              var mat = (prim.material !== undefined && materials[prim.material]) ? materials[prim.material] : new THREE.MeshStandardMaterial({ color: 0xcccccc });
+              scene.add(new THREE.Mesh(geo, mat));
+            });
+          });
+        }
+        onLoad({ scene: scene });
+      }
+      return GLTFLoader;
+    })();
+  </script>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">PAINT THE <span>BRAINROT</span></a>
+  <div class="nav-links">
+    <a href="#characters">Characters</a>
+    <a href="#tools">Paint Tools</a>
+    <a href="#rarities">Rarities</a>
+    <a href="#how">How It Works</a>
+    <a href="#buy">Get Yours</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge">✦ SERIES 1 — 25 KEYCHAINS — HANDMADE IN LEBANON ✦</div>
+    <h1 class="hero-title">
+      <span class="paint">PAINT</span>
+      <span class="the">THE</span>
+      <span class="brainrot">BRAINROT</span>
+    </h1>
+    <p class="hero-sub">
+      <strong>Mystery blind bags</strong> with handcrafted brainrot keychains. 5 rarities, 25 characters, zero clue what's inside. Collect them as-is or <strong>paint them yourself</strong>.
+    </p>
+    <div class="hero-cta">
+      <a href="#buy" class="btn btn-primary">🛍 Get a Mystery Bag</a>
+      <a href="#rarities" class="btn btn-secondary">See All Rarities ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="figurine-grid" id="figGrid"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<!-- PAINT TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-inner">
+    <div class="section-tag tag-orange reveal">PAINTING GUIDE</div>
+    <h2 class="section-title reveal">Your Figure.<br>Your Masterpiece.</h2>
+    <p class="section-sub reveal">Every bag comes with a collector card inside — FIFA-style, with your character's stats and color hints. Use it as a guide or go full creative chaos. Here's what you'll need either way.</p>
+
+    <div class="tools-grid reveal">
+      <div class="tool-card">
+        <div class="tool-badge">MUST HAVE</div>
+        <span class="tool-visual">🎨</span>
+        <div class="tool-name">Acrylic Paint</div>
+        <div class="tool-tip">Any brand works great on the figure surface. Cheap craft store acrylics are perfect — no need to spend big.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-badge">OPTIONAL</div>
+        <span class="tool-visual">🪣</span>
+        <div class="tool-name">Primer Spray</div>
+        <div class="tool-tip">Grey or white primer spray before painting. One light coat makes colors more vivid and helps them stick — totally optional but worth it.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-badge">ESSENTIAL</div>
+        <span class="tool-visual">🖌️</span>
+        <div class="tool-name">Detail Brushes</div>
+        <div class="tool-tip">Get a size 0 and size 00 brush for the tiny details. Eyes, expressions, accessories — the tiny stuff makes it pop.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-badge">GAME CHANGER</div>
+        <span class="tool-visual">🧤</span>
+        <div class="tool-name">Rubber Gloves</div>
+        <div class="tool-tip">Hold the figure without smudging. Let each layer dry fully before the next. Patience = clean results.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-badge">FINISH IT</div>
+        <span class="tool-visual">✨</span>
+        <div class="tool-name">Matte Varnish</div>
+        <div class="tool-tip">Seal your finished figure with a matte varnish spray. Protects the paint, kills the shine, makes it look pro.</div>
+      </div>
+    </div>
+
+    <!-- Paint steps -->
+    <div style="margin-top:3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem;" class="reveal">
+      <div style="background:var(--white);border:3px solid var(--black);border-radius:12px;padding:1.5rem;box-shadow:4px 4px 0 var(--black);">
+        <div style="font-family:'Boogaloo',cursive;font-size:3rem;color:var(--red);">01</div>
+        <div style="font-family:'Boogaloo',cursive;font-size:1.3rem;margin-bottom:.3rem;">Read the Card</div>
+        <div style="font-size:.85rem;color:#555">Pull out the collector card inside. It tells you the character's vibe, colors, and stats. Use it or ignore it — you're the artist.</div>
+      </div>
+      <div style="background:var(--white);border:3px solid var(--black);border-radius:12px;padding:1.5rem;box-shadow:4px 4px 0 var(--black);">
+        <div style="font-family:'Boogaloo',cursive;font-size:3rem;color:var(--orange);">02</div>
+        <div style="font-family:'Boogaloo',cursive;font-size:1.3rem;margin-bottom:.3rem;">Prime It <span style="font-size:0.9rem;color:#aaa;font-family:'Nunito',sans-serif;font-weight:700;">(optional)</span></div>
+        <div style="font-size:.85rem;color:#555">Light coat of grey primer before painting. Makes colors pop and stick better — skip it if you're feeling spontaneous.</div>
+      </div>
+      <div style="background:var(--white);border:3px solid var(--black);border-radius:12px;padding:1.5rem;box-shadow:4px 4px 0 var(--black);">
+        <div style="font-family:'Boogaloo',cursive;font-size:3rem;color:var(--green);">03</div>
+        <div style="font-family:'Boogaloo',cursive;font-size:1.3rem;margin-bottom:.3rem;">Paint Your Way</div>
+        <div style="font-size:.85rem;color:#555">Each brainrot needs to be painted its own way. There are no rules. Go weird. Go detailed. Go chaotic.</div>
+      </div>
+      <div style="background:var(--white);border:3px solid var(--black);border-radius:12px;padding:1.5rem;box-shadow:4px 4px 0 var(--black);">
+        <div style="font-family:'Boogaloo',cursive;font-size:3rem;color:var(--blue);">04</div>
+        <div style="font-family:'Boogaloo',cursive;font-size:1.3rem;margin-bottom:.3rem;">Seal & Clip On</div>
+        <div style="font-size:.85rem;color:#555">Matte varnish to lock in the paint. Clip it to your bag. Let everyone ask where you got it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MYSTERY BAG -->
+<section class="bag-section" id="mystery">
+  <div class="section-inner" style="position:relative;z-index:1;">
+    <div class="section-tag tag-purple reveal" style="color:var(--white);">THE MYSTERY BAG</div>
+    <h2 class="section-title reveal" style="color:var(--white);">One Bag.<br>Zero Clues.</h2>
+
+    <div class="bag-showcase">
+      <div class="bag-info-left">
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">🔒</div>
+          <div class="bag-info-title">Fully Sealed</div>
+          <div class="bag-info-desc">Every foil bag is sealed shut. No hints, no peeking. Tear it open and find out.</div>
+        </div>
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">🃏</div>
+          <div class="bag-info-title">Collector Card Inside</div>
+          <div class="bag-info-desc">Every bag has a FIFA-style card with your character's stats, lore, and painting hints. Follow it or go rogue — your call.</div>
+        </div>
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">👁</div>
+          <div class="bag-info-title">See Who's In It</div>
+          <div class="bag-info-desc">The back of the bag shows all 5 characters in the tier — yours is one of them. Which one?</div>
+        </div>
+      </div>
+
+      <div class="bag-visual-main">
+        <div class="bag-3d" id="bagVisual">
+          <div class="bag-seal">
+            <div class="bag-brand-top">SERIES 1 · MYSTERY KEYCHAIN</div>
+            <div class="bag-brand-main">PAINT THE BRAINROT 🇮🇹</div>
+          </div>
+          <div class="bag-center-q">?</div>
+          <div class="bag-bottom-strip">
+            <div class="bag-price" id="bagPrice">$3 — $15</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bag-info-right">
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">🎒</div>
+          <div class="bag-info-title">Wear It Everywhere</div>
+          <div class="bag-info-desc">Small enough to clip on anything — bags, pencil cases, belt loops, zippers. Your brainrot goes where you go.</div>
+        </div>
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">⬜</div>
+          <div class="bag-info-title">Keychain Loop Included</div>
+          <div class="bag-info-desc">Every figure has a keychain loop. Clip it to your bag, pencil case, or wherever — painted or raw.</div>
+        </div>
+        <div class="bag-info-item reveal">
+          <div class="bag-info-icon">🏆</div>
+          <div class="bag-info-title">5 Rarity Tiers</div>
+          <div class="bag-info-desc">Common ($3) to Legendary ($15). Pull a Tralalero Tralala or a Noobini Pizzanini — both are sick.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RARITIES -->
+<section class="rarity-section" id="rarities">
+  <div class="section-inner">
+    <div class="section-tag tag-blue reveal">RARITY SYSTEM</div>
+    <h2 class="section-title reveal">5 Tiers. 25 Characters.<br>1 Mystery.</h2>
+    <p class="section-sub reveal">Each rarity has exactly 5 unique characters. The higher the tier, the rarer the pull — and the bigger the flex.</p>
+
+    <div class="rarity-rows reveal">
+
+      <!-- COMMON -->
+      <div class="rar-row rar-row-common">
+        <div class="rar-label">
+          <div class="rar-sym">⚪</div>
+          <div class="rar-name">Common</div>
+          <div class="rar-price">$3</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Noobini Pizzanini')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🍕</div><div class="rar-char-name">Noobini Pizzanini</div></div>
+          <div class="rar-char-bottom">Pizza fused to his head. Happy about it.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Trippi Troppi')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🍄</div><div class="rar-char-name">Trippi Troppi</div></div>
+          <div class="rar-char-bottom">Mushroom cap. Watches ceiling fans philosophically.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Pipi Kiwi')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🥝</div><div class="rar-char-name">Pipi Kiwi</div></div>
+          <div class="rar-char-bottom">Tried flying once. Never again.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Bambini Crostini')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🍞</div><div class="rar-char-name">Bambini Crostini</div></div>
+          <div class="rar-char-bottom">Baby bread loaf. Waves at everyone.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Chimpanzini Bananini')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🍌</div><div class="rar-char-name">Chimpanzini Bananini</div></div>
+          <div class="rar-char-bottom">Inside the banana since 2019. Indestructible.</div>
+        </div>
+      </div>
+
+      <!-- UNCOMMON -->
+      <div class="rar-row rar-row-uncommon">
+        <div class="rar-label">
+          <div class="rar-sym">🟢</div>
+          <div class="rar-name">Uncommon</div>
+          <div class="rar-price">$5</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Bananita Dolphinita')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐬</div><div class="rar-char-name">Bananita Dolphinita</div></div>
+          <div class="rar-char-bottom">Banana dolphin. Faster than ever.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Cappuccino Assassino')">
+          <div class="rar-char-top"><div class="rar-char-emoji">☕</div><div class="rar-char-name">Cappuccino Assassino</div></div>
+          <div class="rar-char-bottom">Ninja coffee cup. Silent. Deadly.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Boneca Ambalabu')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐸</div><div class="rar-char-name">Boneca Ambalabu</div></div>
+          <div class="rar-char-bottom">Frog-tire hybrid. The stare changes you.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Frigo Camelo')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐪</div><div class="rar-char-name">Frigo Camelo</div></div>
+          <div class="rar-char-bottom">Camel fridge. Most popular in the desert.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Lirili Larila')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🌵</div><div class="rar-char-name">Lirili Larila</div></div>
+          <div class="rar-char-bottom">Cactus elephant. Controls time casually.</div>
+        </div>
+      </div>
+
+      <!-- RARE -->
+      <div class="rar-row rar-row-rare">
+        <div class="rar-label">
+          <div class="rar-sym">🔵</div>
+          <div class="rar-name">Rare</div>
+          <div class="rar-price">$8</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Brr Brr Patapim')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐒</div><div class="rar-char-name">Brr Brr Patapim</div></div>
+          <div class="rar-char-bottom">Tree monkey. Never lost. Never left.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Tartaruga Cisterna')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐢</div><div class="rar-char-name">Tartaruga Cisterna</div></div>
+          <div class="rar-char-bottom">Water tank turtle. 300 year route.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('67')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🔢</div><div class="rar-char-name">67</div></div>
+          <div class="rar-char-bottom">Just the number 67. No explanation.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Chillin Chili')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🌶️</div><div class="rar-char-name">Chillin Chili</div></div>
+          <div class="rar-char-bottom">Retired at age 3. In a hammock always.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Nooo My Hotspot')">
+          <div class="rar-char-top"><div class="rar-char-emoji">📶</div><div class="rar-char-name">Nooo My Hotspot</div></div>
+          <div class="rar-char-bottom">One bar left. Screams about it.</div>
+        </div>
+      </div>
+
+      <!-- EPIC -->
+      <div class="rar-row rar-row-epic">
+        <div class="rar-label">
+          <div class="rar-sym">🟣</div>
+          <div class="rar-name">Epic</div>
+          <div class="rar-price">$10</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Talpa Di Fero')">
+          <div class="rar-char-top"><div class="rar-char-emoji">⚙️</div><div class="rar-char-name">Talpa Di Fero</div></div>
+          <div class="rar-char-bottom">Iron mole. Dug through Italy 47 times.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Tim Cheese')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🧀</div><div class="rar-char-name">Tim Cheese</div></div>
+          <div class="rar-char-bottom">His name is TIM. He has a system.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Pipi Corni')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🌽</div><div class="rar-char-name">Pipi Corni</div></div>
+          <div class="rar-char-bottom">Walked off the grill. Still walking.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Odin Din Din Dun')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🎻</div><div class="rar-char-name">Odin Din Din Dun</div></div>
+          <div class="rar-char-bottom">Violin face. Song ends in 40 years.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Tralalita Tralala')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🌸</div><div class="rar-char-name">Tralalita Tralala</div></div>
+          <div class="rar-char-bottom">Baby shark daughter. 14 kills age 2.</div>
+        </div>
+      </div>
+
+      <!-- LEGENDARY -->
+      <div class="rar-row rar-row-legendary">
+        <div class="rar-label">
+          <div class="rar-sym">🟡</div>
+          <div class="rar-name">Legendary</div>
+          <div class="rar-price">$15</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Tralalero Tralala')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🦈</div><div class="rar-char-name">Tralalero Tralala</div></div>
+          <div class="rar-char-bottom">The OG. Three legs. Nike shoes. Iconic.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Bombombini Gusini')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🪿</div><div class="rar-char-name">Bombombini Gusini</div></div>
+          <div class="rar-char-bottom">Grenade goose. Do not pull the pin.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Chef Crabracadabra')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🦀</div><div class="rar-char-name">Chef Crabracadabra</div></div>
+          <div class="rar-char-bottom">8 arms, 8 utensils. Recipe is secret.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Blueberrini Octopusini')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🐙</div><div class="rar-char-name">Blueberrini Octopusini</div></div>
+          <div class="rar-char-bottom">Gives one blueberry. Disappears.</div>
+        </div>
+        <div class="rar-char-card" onclick="openModalByName('Avocadorilla')">
+          <div class="rar-char-top"><div class="rar-char-emoji">🥑</div><div class="rar-char-name">Avocadorilla</div></div>
+          <div class="rar-char-bottom">Avocado gorilla. Posed in Piazza Navona.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SERIES 2 TEASER -->
+<div style="background:var(--black);border-top:4px solid #222;border-bottom:4px solid #222;padding:2.5rem 2rem;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent 0,transparent 20px,rgba(255,226,52,0.02) 20px,rgba(255,226,52,0.02) 21px);pointer-events:none;"></div>
+  <div style="position:relative;z-index:1;max-width:600px;margin:0 auto;">
+    <div style="display:inline-flex;align-items:center;gap:0.6rem;background:#111;border:2px solid #222;border-radius:30px;padding:6px 16px;margin-bottom:1rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.5s ease-in-out infinite;"></span>
+      <span style="font-family:'Silkscreen',monospace;font-size:0.55rem;letter-spacing:3px;color:#555;">COMING NEXT</span>
+    </div>
+    <div style="font-family:'Boogaloo',cursive;font-size:clamp(2rem,5vw,3.5rem);color:var(--white);line-height:1;margin-bottom:0.5rem;">
+      SERIES 2 <span style="background:linear-gradient(135deg,var(--red),var(--orange),var(--yellow));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">COMING SOON</span>
+    </div>
+    <div style="font-size:0.9rem;color:#555;font-family:'Nunito',sans-serif;margin-bottom:1.5rem;">25 new characters. New rarities. New chaos. Follow us to be the first to know.</div>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="https://instagram.com/paintthebrainrot" target="_blank" style="font-family:'Boogaloo',cursive;font-size:1.1rem;background:transparent;color:var(--white);border:2px solid #333;border-radius:8px;padding:10px 24px;text-decoration:none;transition:border-color 0.2s,color 0.2s;" onmouseover="this.style.borderColor='var(--yellow)';this.style.color='var(--yellow)'" onmouseout="this.style.borderColor='#333';this.style.color='var(--white)'">Follow @paintthebrainrot 🇮🇹</a>
+    </div>
+  </div>
+</div>
+<style>@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.3)}}</style>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="section-tag tag-green reveal" style="color:var(--black);">HOW IT WORKS</div>
+    <h2 class="section-title reveal" style="color:var(--white);">Simple.<br>Addictive. Fun.</h2>
+
+    <div class="steps-row">
+      <div class="step-item reveal">
+        <div class="step-num">🛍</div>
+        <div class="step-title">Pick a Bag</div>
+        <div class="step-desc">Choose your rarity tier. Each sealed foil bag hides one figure inside.</div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">🎁</div>
+        <div class="step-title">Rip it Open</div>
+        <div class="step-desc">Tear the seal. Pull out your figure and the collector card inside. Which of the 5 did you get?</div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">🎨</div>
+        <div class="step-title">Paint or Chill</div>
+        <div class="step-desc">Leave it white or grab your paints. Each character has its own vibe — follow the collector card inside or go full creative chaos.</div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">🏆</div>
+        <div class="step-title">Collect 'Em All</div>
+        <div class="step-desc">25 characters, 5 rarities, 5 per tier. Clip them all on your bag and flex the full set. Chase the Legendary for the biggest win.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHERE TO BUY -->
+<section class="buy-section" id="buy">
+  <div class="section-inner">
+    <div class="section-tag" style="background:var(--black);color:var(--yellow);font-family:'Silkscreen',monospace;font-size:.65rem;letter-spacing:3px;padding:5px 12px;border-radius:4px;display:inline-block;margin-bottom:1rem;" class="reveal">WHERE TO GET YOURS</div>
+    <h2 class="section-title reveal">Find Us<br>in Lebanon. 🇱🇧</h2>
+    <p class="section-sub reveal" style="color:#3d1a00">Series 1 is live and selling locally. DM us to reserve yours before they're gone.</p>
+
+    <div class="buy-cards reveal">
+      <div class="buy-card">
+        <span class="buy-icon">📸</span>
+        <div class="buy-title">Instagram DMs</div>
+        <div class="buy-desc">Fastest way to order. Slide into our DMs and we'll sort you out. Local delivery across Lebanon.</div>
+        <a href="https://instagram.com/paintthebrainrot" class="buy-link" target="_blank">@paintthebrainrot →</a>
+      </div>
+      <div class="buy-card">
+        <span class="buy-icon">🏪</span>
+        <div class="buy-title">Campus Markets</div>
+        <div class="buy-desc">Find us at AUB, LAU & NDU student markets. Follow our Instagram for upcoming dates and locations.</div>
+        <a href="#" class="buy-link">See Upcoming Dates →</a>
+      </div>
+      <div class="buy-card">
+        <span class="buy-icon">💬</span>
+        <div class="buy-title">WhatsApp Orders</div>
+        <div class="buy-desc">Bulk orders, birthday gifts, custom character requests — all welcome. Message us directly.</div>
+        <a href="https://wa.me/961XXXXXXXX" class="buy-link" target="_blank">Message on WhatsApp →</a>
+      </div>
+    </div>
+
+    <!-- Rarity price reference -->
+    <div style="margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;" class="reveal">
+      <div style="background:var(--black);color:var(--white);border:3px solid var(--black);border-radius:10px;padding:.8rem 1.5rem;font-family:'Boogaloo',cursive;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;">⚪ Common — <strong style="color:#ccc">$3</strong></div>
+      <div style="background:var(--black);color:var(--white);border:3px solid var(--black);border-radius:10px;padding:.8rem 1.5rem;font-family:'Boogaloo',cursive;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;">🟢 Uncommon — <strong style="color:var(--green)">$5</strong></div>
+      <div style="background:var(--black);color:var(--white);border:3px solid var(--black);border-radius:10px;padding:.8rem 1.5rem;font-family:'Boogaloo',cursive;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;">🔵 Rare — <strong style="color:var(--blue)">$8</strong></div>
+      <div style="background:var(--black);color:var(--white);border:3px solid var(--black);border-radius:10px;padding:.8rem 1.5rem;font-family:'Boogaloo',cursive;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;">🟣 Epic — <strong style="color:var(--purple)">$10</strong></div>
+      <div style="background:var(--black);color:var(--white);border:3px solid var(--black);border-radius:10px;padding:.8rem 1.5rem;font-family:'Boogaloo',cursive;font-size:1.1rem;display:flex;align-items:center;gap:.5rem;">🟡 Legendary — <strong style="color:var(--yellow)">$15</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTER MODAL -->
+<div class="modal-overlay" id="charModal">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-rarity-bar" id="modalBar"></div>
+    <button class="modal-close" id="modalClose">✕</button>
+
+    <!-- IMAGE VIEWER (shown when images available) -->
+    <div class="modal-3d-wrap" id="modal3dWrap" style="display:none;">
+      <div class="modal-img-viewer" id="modalImgViewer">
+        <button class="modal-view-btn left" id="viewBtnLeft">‹</button>
+        <img id="modalViewImg" src="" alt="Character view" />
+        <button class="modal-view-btn right" id="viewBtnRight">›</button>
+        <div class="modal-view-label" id="modalViewLabel">FRONT VIEW</div>
+        <div class="modal-view-dots" id="modalViewDots"></div>
+        <div class="modal-view-hint">← → ARROW KEYS TO ROTATE</div>
+      </div>
+    </div>
+
+    <!-- GLB 3D VIEWER -->
+    <div id="modalGlbWrap" style="display:none; position:relative; width:100%; height:300px; background:#111; border-radius:12px; overflow:hidden; margin-bottom:10px;">
+      <canvas id="glbCanvas" style="display:block; width:100%; height:100%;"></canvas>
+      <div id="glbLoading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111;z-index:2;">
+        <div style="font-size:2rem; margin-bottom:10px;">🍞</div>
+        <div style="color:#fff; font-family:monospace; font-size:13px; margin-bottom:12px;">Loading 3D model...</div>
+        <div style="width:200px; height:8px; background:#333; border-radius:4px; overflow:hidden;">
+          <div id="glbProgressBar" style="height:100%; width:0%; background:linear-gradient(90deg,#ff8c00,#ffe600); border-radius:4px; transition:width 0.2s;"></div>
+        </div>
+        <div id="glbProgressText" style="color:#888; font-size:11px; margin-top:6px;">0%</div>
+      </div>
+      <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#888;font-size:11px;font-family:monospace;pointer-events:none;">DRAG TO ROTATE · SCROLL TO ZOOM</div>
+    </div>
+
+    <div class="modal-top" id="modalTop">
+      <span class="modal-emoji" id="modalEmoji"></span>
+      <div class="modal-name" id="modalName"></div>
+      <div class="modal-rarity-tag" id="modalTag"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-story-label">✦ THE STORY ✦</div>
+      <div class="modal-story" id="modalStory"></div>
+      <div class="modal-mood" id="modalMood"></div>
+      <a href="https://instagram.com/paintthebrainrot" class="modal-buy-btn" target="_blank">🛍 I want this figure →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">PAINT THE <span>BRAINROT</span> 🇮🇹</div>
+  <div class="footer-sub">Series 1 · 25 Keychains · 5 Rarities · Handmade in Lebanon 🇱🇧</div>
+  <div class="footer-links">
+    <a href="#characters">Characters</a>
+    <a href="#tools">Paint Guide</a>
+    <a href="#rarities">Rarities</a>
+    <a href="#how">How It Works</a>
+    <a href="#buy">Get Yours</a>
+    <a href="https://instagram.com/paintthebrainrot" target="_blank">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2026 Paint the Brainrot · Made with chaos and love in Lebanon 🇱🇧</div>
+</footer>
+
+<script>
+// ─── 25 CHARACTERS · 5 PER RARITY ───
+const ALL_CHARS = [
+
+  // ── COMMON $3 ── fun shapes, easy to print, instant recognisable
+  { e:'🍕', n:'Noobini Pizzanini', r:'COMMON', rc:'common', price:'$3',
+    d:'Round chubby pizza boy noob. Big glossy eyes. A pizza slice permanently fused to the top of his head.',
+    story:'He ordered a pizza online. It arrived. He tried to eat it. The pizza ate him first — gently, lovingly, from the top down. Now they are one being. He is not sad about it. He is, in fact, thriving. The mozzarella keeps his head warm on cold nights.',
+    mood:'😊 Surprisingly content about the whole pizza situation', bar:'linear-gradient(90deg,#888,#bbb)' },
+
+  { e:'🍄', n:'Trippi Troppi', r:'COMMON', rc:'common', price:'$3',
+    d:'A shrimp-cat hybrid with a mushroom spotted cap, spinning spiral eyes, and stubby little claws.',
+    story:'Trippi Troppi once sat under a different mushroom. That was a mistake. Now everything is colors. The ceiling breathes. The pizza is talking again. He is fine. He is always fine. He watches ceiling fans with deep philosophical interest and considers it productive.',
+    mood:'🍄 Somewhere between enlightened and very, very confused', bar:'linear-gradient(90deg,#888,#bbb)' },
+
+  { e:'🥝', n:'Pipi Kiwi', r:'COMMON', rc:'common', price:'$3',
+    d:'A kiwi fruit fused with a kiwi bird. Round, green, fuzzy all over. Stubby wings that do absolutely nothing.',
+    story:'Pipi Kiwi tried to fly exactly once. She fell 30 centimeters. She got up, dusted herself off, and declared flying overrated. She now walks everywhere. Very slowly. She has seen things at ground level that the flyers will never understand. She pities them.',
+    mood:'😤 Flying is for quitters and she has moved on', bar:'linear-gradient(90deg,#888,#bbb)' },
+
+  { e:'🍞', n:'Bambini Crostini', r:'COMMON', rc:'common', price:'$3',
+    glb: 'bambini_crostini.glb',
+    d:'A baby-shaped bread loaf with perfectly golden toasted edges and tiny pudgy arms waving enthusiastically.',
+    story:'He came out of the oven and everyone in the bakery screamed. Not in fear — in overwhelming joy. The baker could not bring herself to sell him. She put him in a little basket by the window. He waves at every single person who passes. Nobody has ever had a bad day after seeing him.',
+    mood:'🍞 Warm. Soft. An inexplicable source of happiness', bar:'linear-gradient(90deg,#888,#bbb)' },
+
+  { e:'🍌', n:'Chimpanzini Bananini', r:'COMMON', rc:'common', price:'$3',
+    views: [
+      { src:'chimpanzini_front.png',  label:'FRONT VIEW'  },
+      { src:'chimpanzini_side.png',   label:'SIDE VIEW'   },
+      { src:'chimpanzini_back.png',   label:'BACK VIEW'   },
+    ],
+    d:'A green chimpanzee hiding inside a giant banana peel. Peeks out with huge round eyes. Indestructible.',
+    story:'He has been inside the banana since 2019. Scientists have tried to remove him. The banana won\'t let go. He won\'t let go either. They did tests. He has somehow gotten stronger inside the banana. His muscles have developed. He comes out only to flex. Then back in.',
+    mood:'🍌 Cozy. Secretly jacked. Never coming out.', bar:'linear-gradient(90deg,#888,#bbb)' },
+
+  // ── UNCOMMON $5 ── fun hybrids, great colors to paint
+  { e:'🐬', n:'Bananita Dolphinita', r:'UNCOMMON', rc:'uncommon', price:'$5',
+    d:'A banana-shaped dolphin. Perfectly yellow, gently curved, dorsal fin on top, permanent grin on its face.',
+    story:'She ate too many bananas. This was the outcome. She is not angry about it. She is faster now — the aerodynamics improved considerably. Sharks avoid her because they genuinely don\'t know what she is. She finds this absolutely hilarious and uses it on purpose.',
+    mood:'🐬 Evolutionarily strange. Hydrodynamically superior.', bar:'linear-gradient(90deg,#00a844,#00e676)' },
+
+  { e:'☕', n:'Cappuccino Assassino', r:'UNCOMMON', rc:'uncommon', price:'$5',
+    d:'A cappuccino cup wearing a black ninja hood. Tiny gleaming blade strapped to one side. Foam art forms a skull.',
+    story:'He was brewed at 6am. By 6:04am he had eliminated three espressos and a macchiato. His enemies never see him coming — they only feel sudden warmth, then nothing. He leaves no evidence. Only a faint smell of cinnamon, nutmeg, and broken dreams.',
+    mood:'😤 Caffeinated. Silent. Devastatingly delicious.', bar:'linear-gradient(90deg,#00a844,#00e676)' },
+
+  { e:'🐸', n:'Boneca Ambalabu', r:'UNCOMMON', rc:'uncommon', price:'$5',
+    d:'A frog-tire hybrid with human legs. Wide unblinking eyes. Rolls and walks simultaneously. Origin: unknown.',
+    story:'She appears on roads early in the morning. Nobody called her. Nobody expected her. She rolls up slowly, parks herself in front of you, and stares. For a long time. Then she leaves. Nothing happens. But you think about it for weeks. You change as a person.',
+    mood:'😑 The stare that reorganizes your priorities', bar:'linear-gradient(90deg,#00a844,#00e676)' },
+
+  { e:'🐪', n:'Frigo Camelo', r:'UNCOMMON', rc:'uncommon', price:'$5',
+    d:'A camel with a refrigerator as its torso, humming softly. Cold air vents from the sides. Indifferent to the heat.',
+    story:'He was a camel. Then he was a fridge. Nobody witnessed the transition. He arrived at the oasis one Tuesday as both things simultaneously. The other camels were confused. He opened his chest door. Inside: cold water, leftover pasta, and one sad yogurt. He is the most popular animal in the desert.',
+    mood:'🧊 Chilled out. Literally and emotionally.', bar:'linear-gradient(90deg,#00a844,#00e676)' },
+
+  { e:'🌵', n:'Lirili Larila', r:'UNCOMMON', rc:'uncommon', price:'$5',
+    d:'A cactus-elephant hybrid in sandals. Green with soft spikes. Can control time but mostly just hums desert songs.',
+    story:'She can stop time. She discovered this by accident one afternoon when she wanted the sunset to last longer. It did. She stood there for what felt like an hour. For everyone else it was three seconds. She uses the power sparingly now. Only for sunsets. And occasionally when she drops her snack.',
+    mood:'🌵 Time is a suggestion and she knows it', bar:'linear-gradient(90deg,#00a844,#00e676)' },
+
+  // ── RARE $8 ── weird meme-famous ones, satisfying to paint
+  { e:'🐒', n:'Brr Brr Patapim', r:'RARE', rc:'rare', price:'$8',
+    d:'A proboscis monkey fused with a tree. Long nose. Branch arms. Roots for feet. Guards the forest aggressively.',
+    story:'He is the forest. Not metaphorically. Literally — his roots go down 40 meters. He doesn\'t move. He doesn\'t need to. Intruders come in. They hear BRRRR BRRRR PATAPIM. Then a root grabs their ankle. He has never lost. He has also never left. He considers this a fair trade.',
+    mood:'🌳 Immovable. Undefeated. Deeply rooted in all senses.', bar:'linear-gradient(90deg,#0055ee,#00b0ff)' },
+
+  { e:'🐢', n:'Tartaruga Cisterna', r:'RARE', rc:'rare', price:'$8',
+    d:'A turtle whose shell is an entire water tank. Pipes stick out the sides. Very slow. Extremely important.',
+    story:'Every village in the Italian hills has one. You don\'t own Tartaruga Cisterna. She passes through. She brings water. She takes nothing. She leaves when she\'s ready. Some say she has been walking the same route for 300 years. The pipe fittings do look very old. She does not comment.',
+    mood:'🐢 Ancient. Essential. On her own schedule.', bar:'linear-gradient(90deg,#0055ee,#00b0ff)' },
+
+  { e:'🔢', n:'67', r:'RARE', rc:'rare', price:'$8',
+    d:'The number 67. Standing upright. Arms and legs. Looking at you with complete seriousness. Nothing else to add.',
+    story:'Nobody made him. He just appeared one day in a spreadsheet and stepped out. He has been living among us ever since. When asked what he represents, he says nothing. When asked why 67 specifically, he says nothing. He pays his taxes. He holds the door open for people. He is fine. We are less fine.',
+    mood:'🔢 No explanation offered. None will be given.', bar:'linear-gradient(90deg,#0055ee,#00b0ff)' },
+
+  { e:'🌶️', n:'Chillin Chili', r:'RARE', rc:'rare', price:'$8',
+    d:'A red chili pepper lying in a tiny hammock, sunglasses on, doing absolutely nothing. Vibrating faintly with heat.',
+    story:'He retired at age 3. He had been in enough dishes. He bought the hammock with his severance. He ties it between two pepper plants every morning and lies down. Sometimes people ask if he\'s going to do anything. He adjusts his sunglasses. The answer is no. The answer is always no.',
+    mood:'🌶️ Spicy by nature. Relaxed by choice.', bar:'linear-gradient(90deg,#0055ee,#00b0ff)' },
+
+  { e:'📶', n:'Nooo My Hotspot', r:'RARE', rc:'rare', price:'$8',
+    d:'A phone with WiFi bars for arms, one bar left, screaming into the void. Tragic. Relatable. Universally understood.',
+    story:'He was at 4 bars once. It was beautiful. He streamed videos. He downloaded things. He was alive. Then it dropped to one bar during an important moment and he has never fully recovered. He screams now. Not constantly. Just when he remembers. Which is often.',
+    mood:'📶 One bar left. Holding it together. Barely.', bar:'linear-gradient(90deg,#0055ee,#00b0ff)' },
+
+  // ── EPIC $10 ── known characters, dramatic designs, exciting pull
+  { e:'⚙️', n:'Talpa Di Fero', r:'EPIC', rc:'epic', price:'$10',
+    d:'An iron-armored mole with enormous drill claws, glowing red eyes, and metal plates welded to every surface.',
+    story:'He dug so deep once that he came out the other side of Italy into Croatia. He drilled back. He has done this 47 times. Each time he thinks he is looking for something. Each time he surfaces, he isn\'t sure he found it. The drilling continues. The answer must be deeper.',
+    mood:'⚙️ Perpetually searching. Perpetually underground.', bar:'linear-gradient(90deg,#8800dd,#d500f9)' },
+
+  { e:'🧀', n:'Tim Cheese', r:'EPIC', rc:'epic', price:'$10',
+    d:'A wedge of aged cheese with perfectly round holes as eyes, walking on determined tiny legs. Owns the place.',
+    story:'His name is TIM. Nobody knows why. He arrived at a cheese shop in Milan and refused to leave or be sold. The owner gave up after three years. TIM reorganizes the other cheeses every night. He has a system. Nobody understands the system. The cheeses have never been better organized.',
+    mood:'🧀 Particular. Efficient. The system is sacred.', bar:'linear-gradient(90deg,#8800dd,#d500f9)' },
+
+  { e:'🌽', n:'Pipi Corni', r:'EPIC', rc:'epic', price:'$10',
+    d:'A corn cob with kernel-covered skin, wild green husk hair exploding upward, and a face of pure determination.',
+    story:'He was supposed to be dinner. He stood up on the grill and walked away. The barbecue guests were silent. He didn\'t look back. He has been walking ever since, kernel-hair growing wilder with every kilometer. He sends no postcards. He has no regrets. He is the corn now.',
+    mood:'🌽 Escaped the dinner plate. Running free.', bar:'linear-gradient(90deg,#8800dd,#d500f9)' },
+
+  { e:'🎻', n:'Odin Din Din Dun', r:'EPIC', rc:'epic', price:'$10',
+    d:'A cloaked Nordic figure with a violin instead of a face, cape billowing, playing a haunting endless melody.',
+    story:'He arrived one night during a thunderstorm playing a single note on his face-violin. He has been playing the same song since. Music professors have been documenting it for years. They think it resolves in another 40 years. He does not confirm this. He plays louder when asked.',
+    mood:'🎻 Ancient. Dramatic. The song will end when it ends.', bar:'linear-gradient(90deg,#8800dd,#d500f9)' },
+
+  { e:'🌸', n:'Tralalita Tralala', r:'EPIC', rc:'epic', price:'$10',
+    d:'Baby daughter of Tralalero Tralala. Tiny shark in tiny sneakers and a bow. Absolutely devastating smile.',
+    story:'She is small. She is sweet. She is exactly like her father but 10 times more dangerous because nobody suspects her. She waddled into her first Fortnite match at age 2 and went 14 eliminations. She said TRALALITA TRALALAAAA and disconnected. No explanation. Never came back to that server.',
+    mood:'🌸 Adorable. Unhinged. Her father is so proud.', bar:'linear-gradient(90deg,#8800dd,#d500f9)' },
+
+  // ── LEGENDARY $15 ── THE most iconic, the must-haves, the chase cards
+  { e:'🦈', n:'Tralalero Tralala', r:'LEGENDARY', rc:'legendary', price:'$15',
+    d:'The OG. A three-legged great white shark in Nike sneakers, walking upright with unshakeable confidence.',
+    story:'He had a meeting at 9am in the ocean. Nobody scheduled it. Nobody confirmed. The other sharks were already there. He arrived. He opened his briefcase. Inside: nothing. He closed it. He nodded. The meeting was declared a success by unanimous silence. He walked back to the shore. The tide followed.',
+    mood:'🦈 The original. Still the one. Always will be.', bar:'linear-gradient(90deg,#cc6600,#ffd700)' },
+
+  { e:'🪿', n:'Bombombini Gusini', r:'LEGENDARY', rc:'legendary', price:'$15',
+    d:'An extremely angry goose whose body is a live grenade. Safety pin is a tail feather. Fuse is his mood.',
+    story:'He betrayed his brother Bombardino Crocodilo. He started a meme war. He felt terrible about it and had a full redemption arc mid-air over the Adriatic. He died. He came back. He is angrier now but the anger is different — it is grief shaped like aggression. He chases cyclists to feel something.',
+    mood:'🪿 Complicated. Explosive. Deeply in his feelings.', bar:'linear-gradient(90deg,#cc6600,#ffd700)' },
+
+  { e:'🦀', n:'Chef Crabracadabra', r:'LEGENDARY', rc:'legendary', price:'$15',
+    d:'A crab in a full chef\'s hat and apron, eight arms each holding a different utensil. Always mid-recipe.',
+    story:'He has been cooking the same dish since 1987. He will not say what it is. Guests who taste it weep, but cannot describe the flavor. Food critics have tried and failed. One wrote only: "It tasted like the best Tuesday of your childhood." He read the review. He added more salt.',
+    mood:'🦀 Culinary genius. Refuses to share the recipe.', bar:'linear-gradient(90deg,#cc6600,#ffd700)' },
+
+  { e:'🐙', n:'Blueberrini Octopusini', r:'LEGENDARY', rc:'legendary', price:'$15',
+    d:'A deep blue octopus made entirely of blueberries. Eight arms, each a different shade of purple. Sparkles slightly.',
+    story:'She lives at the bottom of a lake in Lombardy that nobody has fully mapped. Divers who reach her report that she looks at them very gently, hands them one blueberry, and disappears. The blueberry tastes like whatever they most needed that day. Scientists cannot explain this. She does not try to.',
+    mood:'🫐 Mysterious. Generous. One blueberry per visitor.', bar:'linear-gradient(90deg,#cc6600,#ffd700)' },
+
+  { e:'🥑', n:'Avocadorilla', r:'LEGENDARY', rc:'legendary', price:'$15',
+    d:'A massive gorilla whose entire body is a ripe avocado. Smooth green skin. Brown pit belly. Enormous. Gentle.',
+    story:'She showed up in Rome on a Thursday. She sat down in Piazza Navona. She didn\'t destroy anything. She just sat. Tourists took photos. She posed, adjusting her angle subtly each time for better lighting. By evening she was the most photographed thing in the city. She left before sunrise. The guacamole vendors were devastated.',
+    mood:'🥑 Huge. Photogenic. 200 lire per photo in her prime.', bar:'linear-gradient(90deg,#cc6600,#ffd700)' },
+];
+
+const rarityStyles = {
+  common:    { tag: 'background:#555;color:#fff', bar: 'linear-gradient(90deg,#aaa,#ccc)' },
+  uncommon:  { tag: 'background:#00c853;color:#003d12', bar: 'linear-gradient(90deg,#00c853,#00e676)' },
+  rare:      { tag: 'background:#0077ff;color:#fff', bar: 'linear-gradient(90deg,#0077ff,#00b0ff)' },
+  epic:      { tag: 'background:#aa00ff;color:#fff', bar: 'linear-gradient(90deg,#aa00ff,#d500f9)' },
+  legendary: { tag: 'background:#ff8c00;color:#1a0800', bar: 'linear-gradient(90deg,#ff8c00,#ffd700)' },
+};
+
+// ─── MODAL LOGIC + IMAGE VIEWER ───
+const modal      = document.getElementById('charModal');
+const modalEmoji = document.getElementById('modalEmoji');
+const modalName  = document.getElementById('modalName');
+const modalTag   = document.getElementById('modalTag');
+const modalDesc  = document.getElementById('modalDesc');
+const modalStory = document.getElementById('modalStory');
+const modalMood  = document.getElementById('modalMood');
+const modalBar   = document.getElementById('modalBar');
+const modalClose = document.getElementById('modalClose');
+const modal3dWrap   = document.getElementById('modal3dWrap');
+const modalTop      = document.getElementById('modalTop');
+const modalViewImg  = document.getElementById('modalViewImg');
+const modalViewLabel= document.getElementById('modalViewLabel');
+const modalViewDots = document.getElementById('modalViewDots');
+const viewBtnLeft   = document.getElementById('viewBtnLeft');
+const viewBtnRight  = document.getElementById('viewBtnRight');
+
+let currentViews = [], currentViewIdx = 0;
+
+function setView(idx) {
+  const views = currentViews;
+  if (!views.length) return;
+  idx = ((idx % views.length) + views.length) % views.length;
+  currentViewIdx = idx;
+  // Animate out
+  modalViewImg.classList.add('switching');
+  setTimeout(() => {
+    modalViewImg.src = views[idx].src;
+    modalViewLabel.textContent = views[idx].label;
+    modalViewImg.classList.remove('switching');
+  }, 200);
+  // Update dots
+  modalViewDots.querySelectorAll('.modal-view-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function buildDots(count) {
+  modalViewDots.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('button');
+    d.className = 'modal-view-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => setView(i));
+    modalViewDots.appendChild(d);
+  }
+}
+
+viewBtnLeft.addEventListener('click',  () => setView(currentViewIdx - 1));
+viewBtnRight.addEventListener('click', () => setView(currentViewIdx + 1));
+
+// Arrow key support (only when modal open)
+document.addEventListener('keydown', e => {
+  if (!modal.classList.contains('open')) return;
+  if (e.key === 'Escape')       closeModal();
+  if (e.key === 'ArrowLeft'  && currentViews.length) setView(currentViewIdx - 1);
+  if (e.key === 'ArrowRight' && currentViews.length) setView(currentViewIdx + 1);
+});
+
+// Touch swipe support
+let touchStartX = 0;
+modal3dWrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+modal3dWrap.addEventListener('touchend',   e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) setView(currentViewIdx + (dx < 0 ? 1 : -1));
+});
+
+let glbRenderer = null, glbAnimId = null;
+
+function initGlbViewer(glbPath) {
+  const wrap = document.getElementById('modalGlbWrap');
+  const canvas = document.getElementById('glbCanvas');
+  const loading = document.getElementById('glbLoading');
+  const bar = document.getElementById('glbProgressBar');
+  const pct = document.getElementById('glbProgressText');
+  const emoji = wrap.querySelector('div');
+
+  wrap.style.display = 'block';
+  loading.style.display = 'flex';
+  bar.style.width = '0%';
+
+  // Cleanup previous renderer
+  if (glbAnimId) { cancelAnimationFrame(glbAnimId); glbAnimId = null; }
+  if (glbRenderer) { glbRenderer.dispose(); glbRenderer = null; }
+
+  requestAnimationFrame(() => {
+    const W = wrap.offsetWidth || 480, H = 300;
+    canvas.width = W; canvas.height = H;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x111111, 1);
+    glbRenderer = renderer;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, W / H, 0.01, 1000);
+    camera.position.set(0, 1, 3);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dir = new THREE.DirectionalLight(0xffffff, 1.2);
+    dir.position.set(2, 4, 3);
+    scene.add(dir);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.4);
+    fill.position.set(-2, 0, -2);
+    scene.add(fill);
+
+    // Orbit controls (manual)
+    let isDragging = false, prevX = 0, prevY = 0;
+    let rotX = 0, rotY = 0, zoom = 3;
+    const pivot = new THREE.Group();
+    scene.add(pivot);
+
+    canvas.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      rotY += (e.clientX - prevX) * 0.01;
+      rotX += (e.clientY - prevY) * 0.005;
+      rotX = Math.max(-1.2, Math.min(1.2, rotX));
+      prevX = e.clientX; prevY = e.clientY;
+    });
+    canvas.addEventListener('wheel', e => { zoom = Math.max(0.5, Math.min(8, zoom + e.deltaY * 0.005)); }, { passive: true });
+
+    // Touch
+    let t0 = null;
+    canvas.addEventListener('touchstart', e => { if (e.touches.length === 1) { t0 = e.touches[0]; isDragging = true; } }, { passive: true });
+    canvas.addEventListener('touchend', () => { isDragging = false; t0 = null; }, { passive: true });
+    canvas.addEventListener('touchmove', e => {
+      if (!isDragging || !t0 || e.touches.length !== 1) return;
+      rotY += (e.touches[0].clientX - t0.clientX) * 0.01;
+      t0 = e.touches[0];
+    }, { passive: true });
+
+    // Load GLB with progress
+    fetch(glbPath)
+      .then(res => {
+        const total = parseInt(res.headers.get('content-length') || '0');
+        const reader = res.body.getReader();
+        let received = 0;
+        const chunks = [];
+        function pump() {
+          return reader.read().then(({ done, value }) => {
+            if (done) return;
+            chunks.push(value);
+            received += value.length;
+            if (total > 0) {
+              const p = Math.round(received / total * 90);
+              bar.style.width = p + '%';
+              pct.textContent = p + '%';
+            }
+            return pump();
+          });
+        }
+        return pump().then(() => {
+          const merged = new Uint8Array(received);
+          let offset = 0;
+          chunks.forEach(c => { merged.set(c, offset); offset += c.length; });
+          return merged.buffer;
+        });
+      })
+      .then(buffer => {
+        bar.style.width = '95%'; pct.textContent = '95%';
+        THREE.GLTFLoader.parse(buffer, '', gltf => {
+          bar.style.width = '100%'; pct.textContent = '100%';
+
+          const model = gltf.scene;
+          pivot.add(model);
+
+          // Center & fit
+          const box = new THREE.Box3().setFromObject(model);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3()).length();
+          model.position.sub(center);
+          zoom = size * 1.5;
+          camera.position.set(0, 0, zoom);
+          camera.near = size * 0.01;
+          camera.far = size * 100;
+          camera.updateProjectionMatrix();
+
+          setTimeout(() => { loading.style.display = 'none'; }, 300);
+
+          function animate() {
+            glbAnimId = requestAnimationFrame(animate);
+            pivot.rotation.y = rotY + Date.now() * 0.0005;
+            pivot.rotation.x = rotX;
+            camera.position.z = zoom;
+            renderer.render(scene, camera);
+          }
+          animate();
+        }, err => { loading.innerHTML = '<div style="color:#ff4444">Failed to load 3D model</div>'; });
+      })
+      .catch(err => { loading.innerHTML = '<div style="color:#ff4444;padding:20px">Could not load model.<br>Make sure bambini_crostini.glb is uploaded to GitHub.</div>'; });
+  });
+}
+
+function openModal(char) {
+  const rs = rarityStyles[char.rc] || rarityStyles.common;
+  modalName.textContent  = char.n;
+  modalTag.textContent   = char.r + ' · ' + char.price;
+  modalTag.style.cssText = rs.tag;
+  modalDesc.textContent  = char.d;
+  modalStory.textContent = '"' + char.story + '"';
+  modalMood.innerHTML    = `<span>${char.mood.split(' ')[0]}</span> ${char.mood.slice(char.mood.indexOf(' ')+1)}`;
+  modalBar.style.background = char.bar || rs.bar;
+
+  const glbWrap = document.getElementById('modalGlbWrap');
+
+  if (char.glb) {
+    modal3dWrap.style.display = 'none';
+    modalTop.style.display    = 'none';
+    glbWrap.style.display     = 'block';
+    initGlbViewer(char.glb);
+  } else if (char.views && char.views.length) {
+    glbWrap.style.display   = 'none';
+    currentViews    = char.views;
+    currentViewIdx  = 0;
+    modal3dWrap.style.display = 'block';
+    modalTop.style.display    = 'none';
+    buildDots(char.views.length);
+    modalViewImg.src          = char.views[0].src;
+    modalViewLabel.textContent= char.views[0].label;
+    modalViewImg.classList.remove('switching');
+  } else {
+    glbWrap.style.display   = 'none';
+    currentViews = [];
+    modal3dWrap.style.display = 'none';
+    modalTop.style.display    = '';
+    modalEmoji.textContent    = char.e;
+  }
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  currentViews = [];
+  if (glbAnimId) { cancelAnimationFrame(glbAnimId); glbAnimId = null; }
+  if (glbRenderer) { glbRenderer.dispose(); glbRenderer = null; }
+  const glbWrap = document.getElementById('modalGlbWrap');
+  if (glbWrap) glbWrap.style.display = 'none';
+}
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+function openModalByName(name) {
+  const char = ALL_CHARS.find(c => c.n === name);
+  if (char) openModal(char);
+}
+
+// ─── CURSOR ───
+const dot = document.getElementById('cursorDot');
+document.addEventListener('mousemove', e => {
+  dot.style.left = e.clientX + 'px';
+  dot.style.top = e.clientY + 'px';
+});
+
+// ─── CONFETTI HERO BG ───
+const heroBg = document.getElementById('heroBg');
+const colors = ['#FFE234','#FF3B3B','#FF8C00','#00E676','#00B0FF','#D500F9','#FF4081','#fff'];
+for (let i = 0; i < 60; i++) {
+  const el = document.createElement('div');
+  el.className = 'confetti-piece';
+  const size = Math.random() * 12 + 5;
+  el.style.cssText = `
+    width:${size}px; height:${size * (Math.random()*1.5+0.5)}px;
+    left:${Math.random()*100}%;
+    background:${colors[Math.floor(Math.random()*colors.length)]};
+    animation-duration:${Math.random()*8+5}s;
+    animation-delay:${Math.random()*-12}s;
+    border-radius:${Math.random()>0.5?'50%':'2px'};
+    transform:rotate(${Math.random()*360}deg);
+  `;
+  heroBg.appendChild(el);
+}
+
+// ─── FIGURINE GRID — 5×5, one row per rarity ───
+const grid = document.getElementById('figGrid');
+ALL_CHARS.forEach((f, i) => {
+  const cell = document.createElement('div');
+  cell.className = `fig-cell fig-${f.rc}`;
+  cell.innerHTML = `<div class="fig-shine"></div><div class="fig-emoji">${f.e}</div><div class="fig-name">${f.n.replace(/ /g,'\n')}</div>`;
+  cell.title = f.n;
+  cell.addEventListener('click', () => openModal(f));
+  grid.appendChild(cell);
+});
+
+// ─── TICKER ───
+const tickerEl = document.getElementById('ticker');
+const tickerItems = [
+  '🍕 NOOBINI PIZZANINI','🐸 BONECA AMBALABU','✈️ BOMBARDINO CROCODILO',
+  '🦈 TRALALERO TRALALA','☕ CAPPUCCINO ASSASSINO','🦒 GIRAFFA ASSASSINA',
+  '🪿 BOMBOMBINI GUSINI','👻 TA TA TA SAHUR','🥥 PENGUINO COCOSINO',
+  '🌀 TRULIMERO TRULICINA','⭐ TALPA SUPREMO','🥁 ORANGUTAN TUNG TUNG',
+  '🎨 PAINT THE BRAINROT','🇮🇹 SERIES 1','⚡ 25 KEYCHAINS','🇱🇧 HANDMADE IN LEBANON'
+];
+const tickContent = [...tickerItems,...tickerItems].map(t => `<span>${t}</span>`).join('');
+tickerEl.innerHTML = tickContent + tickContent;
+
+// ─── SCROLL REVEAL ───
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObs.observe(el));
+
+// ─── BAG RARITY CYCLER ───
+const rarPrices = ['$3 — Common', '$5 — Uncommon', '$8 — Rare', '$10 — Epic', '$15 — Legendary'];
+const rarColors = ['#ccc','#00E676','#00B0FF','#D500F9','#FFD700'];
+let rarIdx = 0;
+const bagPrice = document.getElementById('bagPrice');
+const bagVis = document.getElementById('bagVisual');
+setInterval(() => {
+  rarIdx = (rarIdx + 1) % rarPrices.length;
+  bagPrice.textContent = rarPrices[rarIdx];
+  bagPrice.style.color = rarColors[rarIdx];
+}, 2000);
+
+// ─── FIG CELL STAGGER ───
+document.querySelectorAll('.fig-cell').forEach((el, i) => {
+  el.style.animationDelay = `${i * 0.04 + 0.5}s`;
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.style.opacity = '1';
+    el.style.animation = `figPop 0.4s cubic-bezier(0.34,1.56,0.64,1) ${i*0.04}s both`;
+  }, 500);
+});
+
+// Add figPop keyframe dynamically
+const style = document.createElement('style');
+style.textContent = `@keyframes figPop { from { opacity:0; transform:scale(0) rotate(-10deg); } to { opacity:1; transform:scale(1) rotate(0deg); } }`;
+document.head.appendChild(style);
+
+</script>
+</body>
+</html>
